@@ -10,6 +10,9 @@ exports.AppSimpleModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const app_controller_1 = require("./app.controller");
+const questionnaire_controller_1 = require("./modules/questionnaire/questionnaire.controller");
+const questionnaire_service_1 = require("./modules/questionnaire/questionnaire.service");
+const questionnaire_mock_service_1 = require("./modules/questionnaire/questionnaire.mock.service");
 let AppSimpleModule = class AppSimpleModule {
 };
 exports.AppSimpleModule = AppSimpleModule;
@@ -21,7 +24,13 @@ exports.AppSimpleModule = AppSimpleModule = __decorate([
                 envFilePath: '.env',
             }),
         ],
-        controllers: [app_controller_1.AppController],
+        controllers: [app_controller_1.AppController, questionnaire_controller_1.QuestionnaireController],
+        providers: [
+            {
+                provide: questionnaire_service_1.QuestionnaireService,
+                useClass: questionnaire_mock_service_1.QuestionnaireMockService,
+            },
+        ],
     })
 ], AppSimpleModule);
 //# sourceMappingURL=app-simple.module.js.map

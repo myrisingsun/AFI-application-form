@@ -4,11 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an AFI (Application Form Interface) project with a containerized architecture consisting of:
-- **Backend**: Node.js/Express API server with PostgreSQL database integration
-- **Frontend**: Currently empty directory (likely planned for future frontend implementation)
-- **PDF Service**: Gotenberg container for PDF generation
-- **Database**: PostgreSQL (currently commented out in docker-compose)
+AFI (Application Form Interface) - система управления анкетами кандидатов с модульной архитектурой:
+
+**Текущий статус:** Sprint 1 завершен ✅
+
+- **Backend**: NestJS + TypeScript + TypeORM
+  - Полная система управления приглашениями
+  - Email сервис с Handlebars templates
+  - Swagger API документация
+
+- **Frontend**: Next.js 13 (App Router) + TypeScript + Tailwind CSS
+  - Dashboard для рекрутеров
+  - Управление приглашениями
+  - shadcn/ui компоненты
+
+- **Infrastructure**: Docker-based
+  - PostgreSQL для данных
+  - Redis для queues
+  - MinIO для файлов
+  - MailHog для email (dev)
+  - Gotenberg для PDF generation
 
 ## Architecture
 
