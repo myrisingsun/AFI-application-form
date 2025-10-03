@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import { Candidate } from '@/modules/candidates/entities/candidate.entity';
+import { User } from '@/modules/auth/entities/user.entity';
 
 export enum InvitationStatus {
   PENDING = 'pending',
@@ -26,6 +27,9 @@ export class Invitation {
 
   @Column('uuid')
   candidateId: string;
+
+  @Column('uuid')
+  createdById: string;
 
   @Column()
   token: string;
@@ -61,6 +65,10 @@ export class Invitation {
   @ManyToOne(() => Candidate, { onDelete: 'CASCADE' })
   @JoinColumn()
   candidate: Candidate;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  createdBy: User;
 
   @CreateDateColumn()
   createdAt: Date;

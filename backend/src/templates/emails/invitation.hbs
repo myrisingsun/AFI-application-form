@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приглашение к заполнению анкеты</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .email-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .company-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #374151;
+        }
+        .content {
+            margin-bottom: 30px;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .cta-container {
+            text-align: center;
+        }
+        .expiry-notice {
+            background-color: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #92400e;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .contact-info {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="company-logo">AFI</div>
+            <div>Приглашение к заполнению анкеты</div>
+        </div>
+
+        <div class="greeting">
+            Здравствуйте, {{candidateFirstName}} {{candidateLastName}}!
+        </div>
+
+        <div class="content">
+            <p>Вы получили это письмо, потому что наш специалист по подбору персонала пригласил вас заполнить анкету кандидата.</p>
+
+            <p>Для продолжения процесса рассмотрения вашей кандидатуры, пожалуйста, перейдите по ссылке ниже и заполните все необходимые данные:</p>
+
+            <div class="cta-container">
+                <a href="{{invitationUrl}}" class="cta-button">Заполнить анкету</a>
+            </div>
+
+            <div class="expiry-notice">
+                <strong>Важно:</strong> Ссылка действительна до {{expiryDate}}. После этой даты вам потребуется запросить новое приглашение.
+            </div>
+
+            <p>Заполнение анкеты займет около 10-15 минут. Вы можете сохранить прогресс и вернуться к заполнению позже.</p>
+
+            <p>При возникновении вопросов или технических проблем обращайтесь к специалисту по подбору:</p>
+            <ul>
+                <li><strong>{{recruiterName}}</strong></li>
+                <li>Email: {{recruiterEmail}}</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>С уважением,<br>Команда AFI</p>
+
+            <div class="contact-info">
+                <p>Это автоматически сгенерированное письмо. Пожалуйста, не отвечайте на него.</p>
+                <p>Если вы получили это письмо по ошибке, просто проигнорируйте его.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Invitation = exports.InvitationStatus = void 0;
 const typeorm_1 = require("typeorm");
 const candidate_entity_1 = require("../../candidates/entities/candidate.entity");
+const user_entity_1 = require("../../auth/entities/user.entity");
 var InvitationStatus;
 (function (InvitationStatus) {
     InvitationStatus["PENDING"] = "pending";
@@ -32,6 +33,10 @@ __decorate([
     (0, typeorm_1.Column)('uuid'),
     __metadata("design:type", String)
 ], Invitation.prototype, "candidateId", void 0);
+__decorate([
+    (0, typeorm_1.Column)('uuid'),
+    __metadata("design:type", String)
+], Invitation.prototype, "createdById", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -77,6 +82,11 @@ __decorate([
     (0, typeorm_1.JoinColumn)(),
     __metadata("design:type", candidate_entity_1.Candidate)
 ], Invitation.prototype, "candidate", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { onDelete: 'CASCADE' }),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", user_entity_1.User)
+], Invitation.prototype, "createdBy", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

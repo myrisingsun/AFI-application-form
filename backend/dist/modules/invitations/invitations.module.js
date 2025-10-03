@@ -12,13 +12,19 @@ const typeorm_1 = require("@nestjs/typeorm");
 const invitations_controller_1 = require("./invitations.controller");
 const invitations_service_1 = require("./invitations.service");
 const invitation_entity_1 = require("./entities/invitation.entity");
+const candidate_entity_1 = require("../candidates/entities/candidate.entity");
 const candidates_module_1 = require("../candidates/candidates.module");
+const email_module_1 = require("../email/email.module");
 let InvitationsModule = class InvitationsModule {
 };
 exports.InvitationsModule = InvitationsModule;
 exports.InvitationsModule = InvitationsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([invitation_entity_1.Invitation]), candidates_module_1.CandidatesModule],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([invitation_entity_1.Invitation, candidate_entity_1.Candidate]),
+            candidates_module_1.CandidatesModule,
+            email_module_1.EmailModule,
+        ],
         controllers: [invitations_controller_1.InvitationsController],
         providers: [invitations_service_1.InvitationsService],
         exports: [invitations_service_1.InvitationsService],

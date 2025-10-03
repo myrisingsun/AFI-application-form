@@ -19,7 +19,12 @@
       "Bash(docker logs:*)",
       "Bash(telnet:*)",
       "Bash(ipconfig)",
-      "Bash(echo $WSL_DISTRO_NAME)"
+      "Bash(echo $WSL_DISTRO_NAME)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(test:*)",
+      "Bash(cat:*)",
+      "Bash(PGPASSWORD=afi_pass psql -h localhost -U afi_user -d afi_app -c \"SELECT 1\")"
     ],
     "deny": [],
     "ask": []
