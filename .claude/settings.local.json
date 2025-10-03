@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker-compose:*)",
+      "Bash(npm run start:dev:*)",
+      "Bash(npm run start:simple:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(powershell:*)",
+      "Bash(wget:*)",
+      "Bash(nc localhost 5000)",
+      "Bash(node:*)",
+      "Bash(tasklist)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker logs:*)",
+      "Bash(telnet:*)",
+      "Bash(ipconfig)",
+      "Bash(echo $WSL_DISTRO_NAME)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

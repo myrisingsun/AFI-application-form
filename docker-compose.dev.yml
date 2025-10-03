@@ -1,0 +1,115 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: afi_postgres_dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: afi_user
+      POSTGRES_PASSWORD: afi_pass
+      POSTGRES_DB: afi_app
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U afi_user -d afi_app"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: afi_redis_dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass afi_redis_pass
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: afi_mailhog_dev
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI
+
+  minio:
+    image: minio/minio:latest
+    container_name: afi_minio_dev
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: afi_minio_user
+      MINIO_ROOT_PASSWORD: afi_minio_pass
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    container_name: afi_gotenberg_dev
+    restart: unless-stopped
+    ports:
+      - "3002:3000"
+    command:
+      - "gotenberg"
+      - "--chromium-disable-web-security"
+      - "--chromium-allow-list=file:///*"
+
+  backend:
+    build: ./backend
+    container_name: afi_backend_dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: afi_user
+      DB_PASSWORD: afi_pass
+      DB_DATABASE: afi_app
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: afi_redis_pass
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: afi_minio_user
+      MINIO_SECRET_KEY: afi_minio_pass
+      GOTENBERG_URL: http://gotenberg:3000
+      JWT_SECRET: afi_jwt_secret_dev_only
+      FRONTEND_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: npm run start:dev
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
