@@ -18,6 +18,7 @@ import { Request } from 'express';
 
 import { InvitationsService } from './invitations.service';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
+import { UpdateInvitationStatusDto } from './dto/update-invitation.dto';
 import { InvitationResponseDto } from './dto/invitation-response.dto';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
@@ -75,6 +76,20 @@ export class InvitationsController {
     @CurrentUser() user: any,
   ): Promise<InvitationResponseDto> {
     return this.invitationsService.resendInvitation(id, user.id);
+  }
+
+  @ApiOperation({ summary: 'Изменить статус приглашения' })
+  @ApiBody({ type: UpdateInvitationStatusDto })
+  @ApiResponse({ type: InvitationResponseDto })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.RECRUITER)
+  @Patch(':id/status')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() updateStatusDto: UpdateInvitationStatusDto,
+  ): Promise<InvitationResponseDto> {
+    return this.invitationsService.updateStatus(id, updateStatusDto.status);
   }
 
   @ApiOperation({ summary: 'Отозвать приглашение' })

@@ -162,6 +162,45 @@ export class InvitationsService {
     });
   }
 
+  async updateStatus(invitationId: string, newStatus: InvitationStatus): Promise<InvitationResponseDto> {
+    const invitation = await this.invitationRepository.findOne({
+      where: { id: invitationId },
+      relations: ['candidate', 'createdBy'],
+    });
+
+    if (!invitation) {
+      throw new NotFoundException('Приглашение не найдено');
+    }
+
+    // Обновляем статус и соответствующие временные метки
+    const updateData: any = { status: newStatus };
+
+    switch (newStatus) {
+      case InvitationStatus.SENT:
+        updateData.sentAt = new Date();
+        break;
+      case InvitationStatus.OPENED:
+        updateData.openedAt = new Date();
+        break;
+      case InvitationStatus.COMPLETED:
+        updateData.completedAt = new Date();
+        break;
+      case InvitationStatus.REVOKED:
+        updateData.revokedAt = new Date();
+        break;
+    }
+
+    await this.invitationRepository.update(invitationId, updateData);
+
+    // Загружаем обновленное приглашение
+    const updatedInvitation = await this.invitationRepository.findOne({
+      where: { id: invitationId },
+      relations: ['candidate', 'createdBy'],
+    });
+
+    return this.mapToResponseDto(updatedInvitation);
+  }
+
   async markAsOpened(token: string, ipAddress?: string, userAgent?: string): Promise<void> {
     const invitation = await this.invitationRepository.findOne({
       where: { token },

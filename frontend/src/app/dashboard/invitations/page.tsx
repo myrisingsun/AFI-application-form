@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Send, RotateCcw, Trash2, Eye, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Send, RotateCcw, Trash2, Eye, Clock, CheckCircle, XCircle, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,7 @@ export default function InvitationsPage() {
   const [invitations, setInvitations] = useState<InvitationResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [copiedToken, setCopiedToken] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -80,6 +81,43 @@ export default function InvitationsPage() {
       toast({
         title: 'Ошибка',
         description: 'Не удалось отозвать приглашение',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleUpdateStatus = async (id: string, newStatus: InvitationStatus) => {
+    try {
+      const updatedInvitation = await invitationsApi.updateStatus(id, newStatus);
+      setInvitations(invitations.map(inv =>
+        inv.id === id ? updatedInvitation : inv
+      ));
+      toast({
+        title: 'Успешно',
+        description: `Статус изменен на "${InvitationStatusLabels[newStatus]}"`,
+      });
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось изменить статус приглашения',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleCopyToken = async (token: string) => {
+    try {
+      await navigator.clipboard.writeText(token);
+      setCopiedToken(token);
+      setTimeout(() => setCopiedToken(null), 2000);
+      toast({
+        title: 'Скопировано',
+        description: 'Токен скопирован в буфер обмена',
+      });
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось скопировать токен',
         variant: 'destructive',
       });
     }
@@ -174,6 +212,7 @@ export default function InvitationsPage() {
                 <TableRow>
                   <TableHead>Кандидат</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Токен</TableHead>
                   <TableHead>Статус</TableHead>
                   <TableHead>Создано</TableHead>
                   <TableHead>Истекает</TableHead>
@@ -189,12 +228,63 @@ export default function InvitationsPage() {
                     </TableCell>
                     <TableCell>{invitation.candidate.email}</TableCell>
                     <TableCell>
-                      <Badge className={InvitationStatusColors[invitation.status]}>
-                        <span className="flex items-center gap-1">
-                          {getStatusIcon(invitation.status)}
-                          {InvitationStatusLabels[invitation.status]}
-                        </span>
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <code className="text-xs bg-gray-100 px-2 py-1 rounded max-w-[150px] truncate">
+                          {invitation.token.substring(0, 16)}...
+                        </code>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleCopyToken(invitation.token)}
+                          className="h-6 w-6 p-0"
+                        >
+                          {copiedToken === invitation.token ? (
+                            <Check className="h-3 w-3 text-green-600" />
+                          ) : (
+                            <Copy className="h-3 w-3" />
+                          )}
+                        </Button>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Badge className={InvitationStatusColors[invitation.status]}>
+                          <span className="flex items-center gap-1">
+                            {getStatusIcon(invitation.status)}
+                            {InvitationStatusLabels[invitation.status]}
+                          </span>
+                        </Badge>
+                        {invitation.status !== InvitationStatus.COMPLETED && (
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-6 px-2 text-xs">
+                                Изменить
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-sm">
+                              <DialogHeader>
+                                <DialogTitle>Изменить статус</DialogTitle>
+                                <DialogDescription>
+                                  Выберите новый статус для приглашения
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="grid gap-2 py-4">
+                                {Object.values(InvitationStatus).map((status) => (
+                                  <Button
+                                    key={status}
+                                    variant={invitation.status === status ? "default" : "outline"}
+                                    onClick={() => handleUpdateStatus(invitation.id, status)}
+                                    className="justify-start"
+                                  >
+                                    {getStatusIcon(status)}
+                                    <span className="ml-2">{InvitationStatusLabels[status]}</span>
+                                  </Button>
+                                ))}
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>{formatDate(invitation.createdAt)}</TableCell>
                     <TableCell>{formatDate(invitation.expiresAt)}</TableCell>

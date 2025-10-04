@@ -26,6 +26,12 @@ export const invitationsApi = {
     return response.data;
   },
 
+  // Изменить статус приглашения
+  updateStatus: async (id: string, status: string): Promise<InvitationResponse> => {
+    const response = await api.patch(`/invitations/${id}/status`, { status });
+    return response.data;
+  },
+
   // Отозвать приглашение
   revoke: async (id: string): Promise<void> => {
     await api.delete(`/invitations/${id}`);
