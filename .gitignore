@@ -1,20 +1,78 @@
-# Node.js
+# ==========================
+# Node.js / Package Managers
+# ==========================
 node_modules/
-npm-debug.log
-yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Logs
-*.log
-logs/
+# ==========================
+# Build & Cache Artifacts
+# ==========================
+# Backend (NestJS)
+backend/dist/
+backend/*.tsbuildinfo
+
+# Frontend (Next.js)
+frontend/.next/
+frontend/out/
+frontend/.turbo/
+frontend/.vercel/
+
+# Build cache
+.cache/
+tmp/
 *.tmp
+*.pid
 
-# Docker volumes
-db_data/
-
-# Env files
+# ==========================
+# Environment Files
+# ==========================
 .env
+.env.*
+!*.env.example
 
-# IDE settings
+# ==========================
+# Logs
+# ==========================
+logs/
+*.log
+
+# ==========================
+# Docker / Database
+# ==========================
+docker-compose.override.yml
+db_data/
+volumes/
+*.db
+*.sqlite
+
+# ==========================
+# IDE / OS Specific
+# ==========================
 .vscode/
 .idea/
 .DS_Store
+Thumbs.db
+*.swp
+
+# ==========================
+# Output / Generated Files
+# ==========================
+*.pdf
+*.zip
+*.tar.gz
+*.bak
+nul
+nul.*
+backend/nul
+*.map
+*.d.ts
+
+# ==========================
+# Local project artifacts
+# ==========================
+SPRINT-*.md
+test.*
+questionnaire.*
