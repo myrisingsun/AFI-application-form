@@ -26,7 +26,17 @@
       "Bash(cat:*)",
       "Bash(PGPASSWORD=afi_pass psql -h localhost -U afi_user -d afi_app -c \"SELECT 1\")",
       "Bash(docker port:*)",
-      "Bash(npm run start:demo:*)"
+      "Bash(npm run start:demo:*)",
+      "Bash(docker inspect:*)",
+      "Bash(PGPASSWORD=afi_pass psql:*)",
+      "Bash(timeout 10 bash -c 'while ! curl -s http://localhost:5000/api/docs > /dev/null; do sleep 1; done; echo \"\"Backend is ready\"\"')",
+      "Bash(timeout:*)",
+      "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"SELECT id, status, created_at FROM questionnaires LIMIT 5;\")",
+      "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"DROP TABLE IF EXISTS questionnaires CASCADE;\")",
+      "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"SELECT id, email, role FROM users LIMIT 5;\")",
+      "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"\\d questionnaires\")",
+      "Bash(set PGPASSWORD=run123)",
+      "Bash(psql:*)"
     ],
     "deny": [],
     "ask": []

@@ -8,6 +8,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CandidatesModule } from './modules/candidates/candidates.module';
 import { InvitationsModule } from './modules/invitations/invitations.module';
+import { QuestionnaireModule } from './modules/questionnaire/questionnaire.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { SecurityCheckModule } from './modules/security-check/security-check.module';
@@ -38,6 +39,7 @@ import { ReportsModule } from './modules/reports/reports.module';
     AuthModule,
     CandidatesModule,
     InvitationsModule,
+    QuestionnaireModule,
     DocumentsModule,
     NotificationsModule,
     SecurityCheckModule,

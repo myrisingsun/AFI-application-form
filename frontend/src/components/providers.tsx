@@ -2,7 +2,8 @@
 
 import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Toaster } from 'react-hot-toast'
+import { Toaster as HotToaster } from 'react-hot-toast'
+import { Toaster } from '@/components/ui/toaster'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,7 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <Toaster
+      <HotToaster
         position="top-right"
         toastOptions={{
           duration: 4000,
@@ -40,6 +41,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           },
         }}
       />
+      <Toaster />
     </QueryClientProvider>
   )
 }

@@ -1,7 +1,23 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 export default function HomePage() {
+  const [token, setToken] = useState('');
+  const router = useRouter();
+
+  const handleTokenSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (token.trim()) {
+      router.push(`/questionnaire/${token.trim()}`);
+    }
+  };
+
   return (
     <div className="container mx-auto py-12">
       <div className="text-center mb-12">
@@ -19,13 +35,26 @@ export default function HomePage() {
           <CardHeader>
             <CardTitle>Для кандидатов</CardTitle>
             <CardDescription>
-              Заполните анкету и загрузите документы
+              Заполните анкету по токену из приглашения
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full" asChild>
-              <a href="/questionnaire">Заполнить анкету</a>
-            </Button>
+            <form onSubmit={handleTokenSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="token">Токен приглашения</Label>
+                <Input
+                  id="token"
+                  type="text"
+                  placeholder="Введите токен из приглашения"
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
+                  className="font-mono text-sm"
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={!token.trim()}>
+                Заполнить анкету
+              </Button>
+            </form>
           </CardContent>
         </Card>
 
@@ -38,7 +67,7 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <Button className="w-full" variant="outline" asChild>
-              <a href="/admin">Панель управления</a>
+              <a href="/dashboard">Панель управления</a>
             </Button>
           </CardContent>
         </Card>

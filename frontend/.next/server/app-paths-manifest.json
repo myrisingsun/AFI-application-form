@@ -1,6 +1,0 @@
-{
-  "/not-found": "app/not-found.js",
-  "/page": "app/page.js",
-  "/questionnaire/[token]/page": "app/questionnaire/[token]/page.js",
-  "/questionnaire-demo/page": "app/questionnaire-demo/page.js"
-}

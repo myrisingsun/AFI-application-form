@@ -9,6 +9,7 @@ interface AuthState {
   isLoading: boolean
   setAuth: (user: User, token: string) => void
   clearAuth: () => void
+  logout: () => void
   setLoading: (loading: boolean) => void
 }
 
@@ -33,6 +34,18 @@ export const useAuthStore = create<AuthState>()(
       },
 
       clearAuth: () => {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token')
+        }
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          isLoading: false,
+        })
+      },
+
+      logout: () => {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('auth_token')
         }

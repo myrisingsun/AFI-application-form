@@ -8,7 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
-import { Questionnaire } from './questionnaire.entity';
+import { Questionnaire } from '../../questionnaire/entities/questionnaire.entity';
 
 export enum CandidateStatus {
   DRAFT = 'draft',

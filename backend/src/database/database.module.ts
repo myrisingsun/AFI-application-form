@@ -17,6 +17,20 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
+        // Enhanced connection configuration for Windows + Docker
+        extra: {
+          connectionTimeoutMillis: 10000,
+          query_timeout: 10000,
+          keepAlive: true,
+          keepAliveInitialDelayMillis: 10000,
+          // Fix encoding for Cyrillic characters
+          client_encoding: 'UTF8',
+        },
+        charset: 'utf8',
+        // Increase pool size and add retry logic
+        poolSize: 10,
+        connectTimeoutMS: 10000,
+        maxQueryExecutionTime: 10000,
       }),
       inject: [ConfigService],
     }),
