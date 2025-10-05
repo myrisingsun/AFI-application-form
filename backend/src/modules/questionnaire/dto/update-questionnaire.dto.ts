@@ -25,7 +25,7 @@ export class EducationDto {
 
   @IsOptional()
   @IsDateString()
-  endDate?: string;
+  endDate?: string | null;
 
   @IsBoolean()
   current: boolean;
@@ -43,7 +43,7 @@ export class WorkExperienceDto {
 
   @IsOptional()
   @IsDateString()
-  endDate?: string;
+  endDate?: string | null;
 
   @IsBoolean()
   current: boolean;

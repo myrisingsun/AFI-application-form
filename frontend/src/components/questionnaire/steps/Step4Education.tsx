@@ -75,7 +75,18 @@ export function Step4Education({ data, onChange, onNext, onBack }: Props) {
   });
 
   const onSubmit = (formData: Step4FormData) => {
-    onChange(formData);
+    // Clean up endDate for current education/work entries
+    const cleanedData = {
+      education: formData.education.map(edu => ({
+        ...edu,
+        endDate: edu.current ? undefined : edu.endDate,
+      })),
+      workExperience: formData.workExperience.map(work => ({
+        ...work,
+        endDate: work.current ? undefined : work.endDate,
+      })),
+    };
+    onChange(cleanedData);
     onNext();
   };
 

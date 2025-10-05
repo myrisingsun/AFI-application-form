@@ -12,13 +12,14 @@ const addressSchema = z.object({
   actualAddress: z.string().optional(),
 }).refine(
   (data) => {
-    if (!data.actualAddressSameAsRegistration && !data.actualAddress) {
+    // If checkbox is NOT checked, actualAddress is required
+    if (!data.actualAddressSameAsRegistration && (!data.actualAddress || data.actualAddress.trim().length < 10)) {
       return false;
     }
     return true;
   },
   {
-    message: 'Укажите адрес проживания или отметьте, что он совпадает с регистрацией',
+    message: 'Укажите полный адрес проживания (минимум 10 символов) или отметьте, что он совпадает с регистрацией',
     path: ['actualAddress'],
   }
 );
@@ -50,7 +51,14 @@ export function Step3Address({ data, onChange, onNext, onBack }: Props) {
   const sameAsRegistration = watch('actualAddressSameAsRegistration');
 
   const onSubmit = (formData: AddressFormData) => {
-    onChange(formData);
+    // If same as registration, copy registration address to actual address
+    const dataToSave = {
+      ...formData,
+      actualAddress: formData.actualAddressSameAsRegistration
+        ? formData.registrationAddress
+        : formData.actualAddress
+    };
+    onChange(dataToSave);
     onNext();
   };
 
