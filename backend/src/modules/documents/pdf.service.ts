@@ -139,6 +139,22 @@ export class PdfService {
     });
   }
 
+  /**
+   * Generate PDF from consent data using template
+   */
+  async generateConsentPdf(data: any): Promise<Buffer> {
+    const html = this.renderTemplate('consent', {
+      ...data,
+      currentDate: new Date(),
+    });
+    return this.generatePdfFromHtml(html, {
+      marginTop: '0.5',
+      marginBottom: '0.5',
+      marginLeft: '0.6',
+      marginRight: '0.6',
+    });
+  }
+
   private generateQuestionnaireHtml(data: any): string {
     const {
       candidate,

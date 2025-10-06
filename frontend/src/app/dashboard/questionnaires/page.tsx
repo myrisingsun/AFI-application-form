@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FileText, Eye, Download, Search, Trash2, Copy } from 'lucide-react';
+import { FileText, Eye, Download, Search, Trash2, Copy, FileCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -97,6 +97,31 @@ export default function QuestionnairesPage() {
       toast({
         title: 'Ошибка',
         description: 'Не удалось скачать PDF',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDownloadConsentPdf = async (id: string, candidateName: string) => {
+    try {
+      const blob = await questionnairesApi.downloadConsentPdf(id);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `soglasie-PDN-${candidateName}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast({
+        title: 'Успешно',
+        description: 'PDF согласия на обработку ПДН скачан',
+      });
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось скачать PDF согласия',
         variant: 'destructive',
       });
     }
@@ -248,17 +273,30 @@ export default function QuestionnairesPage() {
                         </Button>
 
                         {questionnaire.status === 'submitted' && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDownloadPdf(
-                              questionnaire.id!,
-                              `${questionnaire.candidate?.lastName}-${questionnaire.candidate?.firstName}`
-                            )}
-                            title="Скачать PDF"
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDownloadPdf(
+                                questionnaire.id!,
+                                `${questionnaire.candidate?.lastName}-${questionnaire.candidate?.firstName}`
+                              )}
+                              title="Скачать анкету"
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDownloadConsentPdf(
+                                questionnaire.id!,
+                                `${questionnaire.candidate?.lastName}-${questionnaire.candidate?.firstName}`
+                              )}
+                              title="Скачать согласие ПДН"
+                            >
+                              <FileCheck className="h-4 w-4" />
+                            </Button>
+                          </>
                         )}
 
                         <Button

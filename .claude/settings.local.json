@@ -39,7 +39,8 @@
       "Bash(psql:*)",
       "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"SELECT id, status, created_at FROM questionnaires WHERE status = ''submitted'' LIMIT 1;\")",
       "Bash(docker restart:*)",
-      "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"SELECT COUNT(*) as total_questionnaires FROM questionnaires;\" -t)"
+      "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"SELECT COUNT(*) as total_questionnaires FROM questionnaires;\" -t)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

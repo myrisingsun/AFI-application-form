@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Согласие на обработку персональных данных</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+            padding: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #000;
+        }
+
+        .header h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 11pt;
+            color: #333;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .section p {
+            margin-bottom: 10px;
+            text-indent: 30px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+            text-indent: 0;
+        }
+
+        .info-block {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #000;
+            background-color: #f9f9f9;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+
+        .info-value {
+            flex: 1;
+            border-bottom: 1px solid #333;
+            padding-left: 5px;
+        }
+
+        .list {
+            margin-left: 40px;
+            margin-bottom: 10px;
+        }
+
+        .list li {
+            margin-bottom: 5px;
+        }
+
+        .signature-block {
+            margin-top: 40px;
+            page-break-inside: avoid;
+        }
+
+        .signature-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            align-items: flex-end;
+        }
+
+        .signature-field {
+            flex: 1;
+            margin: 0 20px;
+        }
+
+        .signature-label {
+            font-size: 10pt;
+            margin-bottom: 5px;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #000;
+            height: 30px;
+            position: relative;
+        }
+
+        .date-field {
+            width: 150px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ccc;
+            font-size: 9pt;
+            color: #666;
+            text-align: center;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Согласие на обработку персональных данных</h1>
+        <div class="subtitle">в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ</div>
+    </div>
+
+    <div class="info-block">
+        <div class="info-row">
+            <div class="info-label">Я,</div>
+            <div class="info-value">{{fullName candidate.lastName candidate.firstName candidate.middleName}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Дата рождения:</div>
+            <div class="info-value">{{formatDate birthDate "DD.MM.YYYY"}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Паспорт:</div>
+            <div class="info-value">{{passportSeries}} {{passportNumber}}, выдан {{passportIssuer}}, {{formatDate passportIssueDate "DD.MM.YYYY"}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Адрес регистрации:</div>
+            <div class="info-value">{{registrationAddress}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Контактный телефон:</div>
+            <div class="info-value">{{formatPhone candidate.phone}}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Email:</div>
+            <div class="info-value">{{candidate.email}}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <p>
+            настоящим даю свое согласие <strong>АФИ (AFI)</strong> (далее – Оператор), расположенному по адресу:
+            [АДРЕС КОМПАНИИ], на обработку моих персональных данных в целях рассмотрения моей кандидатуры
+            на вакантную должность, проведения проверки службой безопасности, а также последующего
+            оформления трудовых отношений в случае положительного решения о приеме на работу.
+        </p>
+    </div>
+
+    <div class="section">
+        <p class="section-title">1. Перечень персональных данных, на обработку которых дается согласие:</p>
+        <ul class="list">
+            <li>фамилия, имя, отчество;</li>
+            <li>дата и место рождения;</li>
+            <li>гражданство;</li>
+            <li>паспортные данные (серия, номер, кем и когда выдан, код подразделения);</li>
+            <li>адрес регистрации и фактического проживания;</li>
+            <li>контактные телефоны;</li>
+            <li>адрес электронной почты;</li>
+            <li>сведения об образовании (наименование учебного заведения, период обучения, специальность);</li>
+            <li>сведения о трудовой деятельности (места работы, должности, периоды работы);</li>
+            <li>фотография;</li>
+            <li>иные данные, указанные в резюме и анкете кандидата.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <p class="section-title">2. Перечень действий с персональными данными:</p>
+        <ul class="list">
+            <li>сбор;</li>
+            <li>запись;</li>
+            <li>систематизация;</li>
+            <li>накопление;</li>
+            <li>хранение;</li>
+            <li>уточнение (обновление, изменение);</li>
+            <li>извлечение;</li>
+            <li>использование;</li>
+            <li>передача (предоставление, доступ);</li>
+            <li>обезличивание;</li>
+            <li>блокирование;</li>
+            <li>удаление;</li>
+            <li>уничтожение.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <p class="section-title">3. Способы обработки персональных данных:</p>
+        <p>
+            Обработка персональных данных может осуществляться как с использованием средств автоматизации
+            (включая программное обеспечение), так и без использования таких средств (неавтоматизированная обработка).
+        </p>
+    </div>
+
+    <div class="section">
+        <p class="section-title">4. Цели обработки персональных данных:</p>
+        <ul class="list">
+            <li>рассмотрение кандидатуры на вакантную должность;</li>
+            <li>проверка достоверности предоставленных сведений;</li>
+            <li>проведение проверки службой безопасности;</li>
+            <li>подготовка и оформление документов при приеме на работу;</li>
+            <li>ведение кадрового делопроизводства;</li>
+            <li>исполнение требований законодательства Российской Федерации.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <p class="section-title">5. Передача персональных данных третьим лицам:</p>
+        <p>
+            Даю согласие на передачу моих персональных данных третьим лицам в целях, указанных в настоящем согласии,
+            в том числе:
+        </p>
+        <ul class="list">
+            <li>службе безопасности Оператора для проведения проверочных мероприятий;</li>
+            <li>уполномоченным государственным органам в случаях, предусмотренных законодательством;</li>
+            <li>аффилированным лицам и партнерам Оператора в рамках кадрового документооборота.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <p class="section-title">6. Срок действия согласия:</p>
+        <p>
+            Настоящее согласие действует с момента его подписания до достижения целей обработки персональных данных
+            или до момента отзыва согласия. Согласие может быть отозвано мною в любое время на основании
+            письменного заявления, направленного Оператору.
+        </p>
+    </div>
+
+    <div class="section">
+        <p class="section-title">7. Права субъекта персональных данных:</p>
+        <p>
+            Мне известно, что я имею право на получение информации, касающейся обработки моих персональных данных,
+            в том числе содержащей:
+        </p>
+        <ul class="list">
+            <li>подтверждение факта обработки персональных данных;</li>
+            <li>правовые основания и цели обработки;</li>
+            <li>применяемые способы обработки;</li>
+            <li>сведения о лицах, которые имеют доступ к персональным данным;</li>
+            <li>перечень обрабатываемых персональных данных;</li>
+            <li>иные сведения, предусмотренные действующим законодательством.</li>
+        </ul>
+        <p>
+            Также мне известно право требовать от Оператора уточнения, блокирования или уничтожения моих
+            персональных данных в случае, если они являются неполными, устаревшими, неточными, незаконно
+            полученными или не являются необходимыми для заявленной цели обработки.
+        </p>
+    </div>
+
+    <div class="section">
+        <p class="section-title">8. Дополнительные условия:</p>
+        <p>
+            Я подтверждаю, что ознакомлен(а) с положениями Федерального закона от 27.07.2006 № 152-ФЗ
+            «О персональных данных», права и обязанности в области защиты персональных данных мне разъяснены.
+        </p>
+        <p>
+            Я осознаю, что предоставление недостоверных сведений или отказ от предоставления необходимых
+            персональных данных может привести к невозможности рассмотрения моей кандидатуры на вакантную должность.
+        </p>
+    </div>
+
+    <div class="signature-block">
+        <div class="signature-row">
+            <div class="date-field">
+                <div class="signature-label">Дата:</div>
+                <div class="signature-line">{{formatDate currentDate "DD.MM.YYYY"}}</div>
+            </div>
+            <div class="signature-field">
+                <div class="signature-label">Подпись субъекта персональных данных:</div>
+                <div class="signature-line"></div>
+            </div>
+            <div class="signature-field">
+                <div class="signature-label">Расшифровка подписи:</div>
+                <div class="signature-line">{{fullName candidate.lastName candidate.firstName candidate.middleName}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Документ сгенерирован автоматически системой AFI Application Form</p>
+        <p>Дата формирования: {{formatDate currentDate "DD.MM.YYYY HH:mm:ss"}}</p>
+        {{#if candidate.invitationToken}}
+        <p>Токен приглашения: {{candidate.invitationToken}}</p>
+        {{/if}}
+    </div>
+</body>
+</html>

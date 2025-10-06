@@ -22,6 +22,14 @@ export const questionnairesApi = {
     return response.data;
   },
 
+  // Скачать PDF согласия на обработку ПДН
+  downloadConsentPdf: async (id: string): Promise<Blob> => {
+    const response = await api.get(`/questionnaires/${id}/consent/pdf`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
   // Удалить анкету
   delete: async (id: string): Promise<void> => {
     await api.delete(`/questionnaires/${id}`);

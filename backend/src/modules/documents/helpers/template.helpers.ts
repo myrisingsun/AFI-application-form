@@ -83,6 +83,26 @@ export const templateHelpers = {
   },
 
   /**
+   * Format full name from parts
+   * Usage: {{fullName lastName firstName middleName}}
+   */
+  fullName: (lastName: string, firstName: string, middleName: string): string => {
+    const parts = [lastName, firstName, middleName].filter(Boolean);
+    return parts.length > 0 ? parts.join(' ') : 'Не указано';
+  },
+
+  /**
+   * Get initials from first and middle name
+   * Usage: {{initials firstName middleName}}
+   */
+  initials: (firstName: string, middleName: string): string => {
+    const parts = [];
+    if (firstName) parts.push(firstName.charAt(0).toUpperCase() + '.');
+    if (middleName) parts.push(middleName.charAt(0).toUpperCase() + '.');
+    return parts.join('');
+  },
+
+  /**
    * Format passport series and number
    * Usage: {{formatPassport series number}}
    */
