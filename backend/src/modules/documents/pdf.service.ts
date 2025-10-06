@@ -1,15 +1,37 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import FormData from 'form-data';
-import axios from 'axios';
+import * as Handlebars from 'handlebars';
+import * as fs from 'fs';
+import * as path from 'path';
+import { promisify } from 'util';
+import { exec } from 'child_process';
+import { templateHelpers } from './helpers/template.helpers';
+
+const execPromise = promisify(exec);
 
 @Injectable()
 export class PdfService {
   private readonly logger = new Logger(PdfService.name);
   private readonly gotenbergUrl: string;
+  private readonly templatesPath: string;
 
   constructor(private configService: ConfigService) {
     this.gotenbergUrl = this.configService.get<string>('GOTENBERG_URL');
+    this.templatesPath = path.join(__dirname, 'templates');
+
+    // Register all Handlebars helpers
+    this.registerHelpers();
+  }
+
+  /**
+   * Register custom Handlebars helpers
+   */
+  private registerHelpers(): void {
+    Object.keys(templateHelpers).forEach((helperName) => {
+      Handlebars.registerHelper(helperName, templateHelpers[helperName]);
+    });
+
+    this.logger.log(`Registered ${Object.keys(templateHelpers).length} Handlebars helpers`);
   }
 
   async generatePdfFromHtml(html: string, options?: {
@@ -21,53 +43,99 @@ export class PdfService {
     paperHeight?: string;
   }): Promise<Buffer> {
     try {
-      const form = new FormData();
+      // Windows/Docker networking workaround: use curl via child_process
+      const tempDir = path.join(__dirname, '..', '..', '..', 'tmp');
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
 
-      // Add HTML file
-      form.append('files', Buffer.from(html), {
-        filename: 'index.html',
-        contentType: 'text/html',
-      });
+      const timestamp = Date.now();
+      const htmlFile = path.join(tempDir, `temp_${timestamp}.html`);
+      const pdfFile = path.join(tempDir, `temp_${timestamp}.pdf`);
 
-      // Add options
-      if (options?.marginTop) form.append('marginTop', options.marginTop);
-      if (options?.marginBottom) form.append('marginBottom', options.marginBottom);
-      if (options?.marginLeft) form.append('marginLeft', options.marginLeft);
-      if (options?.marginRight) form.append('marginRight', options.marginRight);
-      if (options?.paperWidth) form.append('paperWidth', options.paperWidth);
-      if (options?.paperHeight) form.append('paperHeight', options.paperHeight);
+      // Write HTML to temp file
+      fs.writeFileSync(htmlFile, html);
 
-      // Default options
-      form.append('marginTop', options?.marginTop || '0.5');
-      form.append('marginBottom', options?.marginBottom || '0.5');
-      form.append('marginLeft', options?.marginLeft || '0.5');
-      form.append('marginRight', options?.marginRight || '0.5');
+      this.logger.debug(`Sending request to Gotenberg: ${this.gotenbergUrl}`);
 
-      const response = await axios.post(
-        `${this.gotenbergUrl}/forms/chromium/convert/html`,
-        form,
-        {
-          headers: form.getHeaders(),
-          responseType: 'arraybuffer',
-          timeout: 30000, // 30 seconds timeout
-        },
-      );
+      // Build curl command
+      const marginTop = options?.marginTop || '0.5';
+      const marginBottom = options?.marginBottom || '0.5';
+      const marginLeft = options?.marginLeft || '0.5';
+      const marginRight = options?.marginRight || '0.5';
+
+      let curlCommand = `curl -s -X POST "${this.gotenbergUrl}/forms/chromium/convert/html" ` +
+        `-F "files=@${htmlFile};filename=index.html" ` +
+        `-F "marginTop=${marginTop}" ` +
+        `-F "marginBottom=${marginBottom}" ` +
+        `-F "marginLeft=${marginLeft}" ` +
+        `-F "marginRight=${marginRight}"`;
+
+      if (options?.paperWidth) {
+        curlCommand += ` -F "paperWidth=${options.paperWidth}"`;
+      }
+      if (options?.paperHeight) {
+        curlCommand += ` -F "paperHeight=${options.paperHeight}"`;
+      }
+
+      curlCommand += ` -o "${pdfFile}" --max-time 30`;
+
+      // Execute curl command
+      await execPromise(curlCommand);
+
+      // Read PDF file
+      if (!fs.existsSync(pdfFile)) {
+        throw new Error('PDF file was not created');
+      }
+
+      const pdfBuffer = fs.readFileSync(pdfFile);
+
+      // Cleanup temp files
+      fs.unlinkSync(htmlFile);
+      fs.unlinkSync(pdfFile);
 
       this.logger.log('PDF generated successfully');
-      return Buffer.from(response.data);
+      return pdfBuffer;
     } catch (error) {
       this.logger.error('Failed to generate PDF', error);
       throw new Error(`PDF generation failed: ${error.message}`);
     }
   }
 
+  /**
+   * Render template with data
+   */
+  private renderTemplate(templateName: string, data: any): string {
+    try {
+      const templatePath = path.join(this.templatesPath, `${templateName}.hbs`);
+
+      if (!fs.existsSync(templatePath)) {
+        this.logger.warn(`Template not found: ${templatePath}, using legacy HTML generation`);
+        return this.generateQuestionnaireHtml(data);
+      }
+
+      const templateSource = fs.readFileSync(templatePath, 'utf-8');
+      const template = Handlebars.compile(templateSource);
+      const html = template(data);
+
+      this.logger.log(`Template ${templateName} rendered successfully`);
+      return html;
+    } catch (error) {
+      this.logger.error(`Failed to render template ${templateName}:`, error);
+      throw new Error(`Template rendering failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Generate PDF from questionnaire data using template
+   */
   async generateQuestionnairePdf(data: any): Promise<Buffer> {
-    const html = this.generateQuestionnaireHtml(data);
+    const html = this.renderTemplate('questionnaire', data);
     return this.generatePdfFromHtml(html, {
-      marginTop: '1',
-      marginBottom: '1',
-      marginLeft: '1',
-      marginRight: '1',
+      marginTop: '0.4',
+      marginBottom: '0.4',
+      marginLeft: '0.6',
+      marginRight: '0.6',
     });
   }
 

@@ -48,7 +48,7 @@ services:
     container_name: afi_gotenberg
     restart: always
     ports:
-      - "3001:3000"
+      - "3002:3000"
 
   backend:
     build: ./backend
