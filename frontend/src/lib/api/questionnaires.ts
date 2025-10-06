@@ -21,4 +21,9 @@ export const questionnairesApi = {
     });
     return response.data;
   },
+
+  // Удалить анкету
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/questionnaires/${id}`);
+  },
 };

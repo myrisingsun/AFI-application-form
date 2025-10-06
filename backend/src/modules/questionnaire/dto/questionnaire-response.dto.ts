@@ -39,4 +39,7 @@ export class QuestionnaireResponseDto {
   createdAt: Date;
   updatedAt: Date;
   submittedAt?: Date;
+
+  // Invitation token
+  invitationToken?: string;
 }

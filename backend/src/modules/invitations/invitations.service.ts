@@ -60,6 +60,16 @@ export class InvitationsService {
     return this.mapToResponseDto(invitation);
   }
 
+  async findByCandidateId(candidateId: string): Promise<Invitation | null> {
+    const invitation = await this.invitationRepository.findOne({
+      where: { candidateId },
+      relations: ['candidate', 'createdBy'],
+      order: { createdAt: 'DESC' }, // Get the most recent invitation
+    });
+
+    return invitation;
+  }
+
   async createInvitation(
     createInvitationDto: CreateInvitationDto,
     userId: string,

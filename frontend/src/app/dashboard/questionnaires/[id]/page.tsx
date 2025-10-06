@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Download, User, FileText, MapPin, GraduationCap, Briefcase, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Download, User, FileText, MapPin, GraduationCap, Briefcase, CheckCircle, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -83,6 +83,29 @@ export default function QuestionnaireDetailPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!questionnaire) return;
+
+    if (!confirm('Вы уверены, что хотите удалить эту анкету? Это действие необратимо.')) {
+      return;
+    }
+
+    try {
+      await questionnairesApi.delete(questionnaire.id!);
+      toast({
+        title: 'Успешно',
+        description: 'Анкета удалена',
+      });
+      router.push('/dashboard/questionnaires');
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить анкету',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '—';
     return format(new Date(dateString), 'dd.MM.yyyy', { locale: ru });
@@ -132,6 +155,14 @@ export default function QuestionnaireDetailPage() {
               Скачать PDF
             </Button>
           )}
+          <Button
+            variant="outline"
+            onClick={handleDelete}
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Удалить
+          </Button>
         </div>
       </div>
 

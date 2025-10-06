@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FileText, Eye, Download, Search } from 'lucide-react';
+import { FileText, Eye, Download, Search, Trash2, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -102,6 +102,35 @@ export default function QuestionnairesPage() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm('Вы уверены, что хотите удалить эту анкету? Это действие необратимо.')) {
+      return;
+    }
+
+    try {
+      await questionnairesApi.delete(id);
+      await loadQuestionnaires();
+      toast({
+        title: 'Успешно',
+        description: 'Анкета удалена',
+      });
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить анкету',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleCopyToken = (token: string) => {
+    navigator.clipboard.writeText(token);
+    toast({
+      title: 'Успешно',
+      description: 'Токен скопирован в буфер обмена',
+    });
+  };
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '—';
     return format(new Date(dateString), 'dd.MM.yyyy HH:mm', { locale: ru });
@@ -166,6 +195,7 @@ export default function QuestionnairesPage() {
                 <TableRow>
                   <TableHead>Кандидат</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Токен приглашения</TableHead>
                   <TableHead>Статус</TableHead>
                   <TableHead>Дата создания</TableHead>
                   <TableHead>Дата отправки</TableHead>
@@ -180,6 +210,25 @@ export default function QuestionnairesPage() {
                       {questionnaire.candidate?.middleName && ` ${questionnaire.candidate.middleName}`}
                     </TableCell>
                     <TableCell>{questionnaire.candidate?.email}</TableCell>
+                    <TableCell>
+                      {questionnaire.invitationToken ? (
+                        <div className="flex items-center gap-2">
+                          <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+                            {questionnaire.invitationToken.substring(0, 8)}...
+                          </code>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCopyToken(questionnaire.invitationToken!)}
+                            title="Скопировать токен"
+                          >
+                            <Copy className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge className={StatusColors[questionnaire.status as keyof typeof StatusColors] || 'bg-gray-500'}>
                         {StatusLabels[questionnaire.status as keyof typeof StatusLabels] || questionnaire.status}
@@ -211,6 +260,16 @@ export default function QuestionnairesPage() {
                             <Download className="h-4 w-4" />
                           </Button>
                         )}
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(questionnaire.id!)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          title="Удалить анкету"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
