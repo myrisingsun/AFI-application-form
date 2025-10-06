@@ -86,6 +86,27 @@ export default function InvitationsPage() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm('Вы уверены, что хотите удалить это приглашение? Это действие необратимо.')) {
+      return;
+    }
+
+    try {
+      await invitationsApi.delete(id);
+      await loadInvitations();
+      toast({
+        title: 'Успешно',
+        description: 'Приглашение удалено',
+      });
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить приглашение',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const handleUpdateStatus = async (id: string, newStatus: InvitationStatus) => {
     try {
       const updatedInvitation = await invitationsApi.updateStatus(id, newStatus);
@@ -296,6 +317,7 @@ export default function InvitationsPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleResend(invitation.id)}
+                            title="Отправить повторно"
                           >
                             <RotateCcw className="h-4 w-4" />
                           </Button>
@@ -307,10 +329,21 @@ export default function InvitationsPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleRevoke(invitation.id)}
+                            title="Отозвать приглашение"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <XCircle className="h-4 w-4" />
                           </Button>
                         )}
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(invitation.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          title="Удалить приглашение"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>

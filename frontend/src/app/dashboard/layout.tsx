@@ -10,8 +10,8 @@ import { useAuthStore } from '@/stores/auth';
 
 const navigation = [
   { name: 'Приглашения', href: '/dashboard/invitations', icon: Mail },
+  { name: 'Анкеты', href: '/dashboard/questionnaires', icon: FileText },
   { name: 'Кандидаты', href: '/dashboard/candidates', icon: Users },
-  { name: 'Документы', href: '/dashboard/documents', icon: FileText },
   { name: 'Настройки', href: '/dashboard/settings', icon: Settings },
 ];
 

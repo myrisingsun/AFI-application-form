@@ -162,6 +162,19 @@ export class InvitationsService {
     });
   }
 
+  async deleteInvitation(invitationId: string): Promise<void> {
+    const invitation = await this.invitationRepository.findOne({
+      where: { id: invitationId },
+    });
+
+    if (!invitation) {
+      throw new NotFoundException('Приглашение не найдено');
+    }
+
+    // Физическое удаление приглашения из базы
+    await this.invitationRepository.delete(invitationId);
+  }
+
   async updateStatus(invitationId: string, newStatus: InvitationStatus): Promise<InvitationResponseDto> {
     const invitation = await this.invitationRepository.findOne({
       where: { id: invitationId },

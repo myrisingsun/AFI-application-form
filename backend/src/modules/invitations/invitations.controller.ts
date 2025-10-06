@@ -97,9 +97,19 @@ export class InvitationsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.RECRUITER)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(':id')
+  @Delete(':id/revoke')
   async revoke(@Param('id') id: string): Promise<void> {
     return this.invitationsService.revokeInvitation(id);
+  }
+
+  @ApiOperation({ summary: 'Удалить приглашение (физическое удаление)' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.RECRUITER)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<void> {
+    return this.invitationsService.deleteInvitation(id);
   }
 
   // Публичные эндпоинты для кандидатов (без аутентификации)

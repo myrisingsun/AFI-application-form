@@ -34,6 +34,11 @@ export const invitationsApi = {
 
   // Отозвать приглашение
   revoke: async (id: string): Promise<void> => {
+    await api.delete(`/invitations/${id}/revoke`);
+  },
+
+  // Удалить приглашение полностью
+  delete: async (id: string): Promise<void> => {
     await api.delete(`/invitations/${id}`);
   },
 
