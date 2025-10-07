@@ -55,21 +55,27 @@ export class EmailService {
   }
 
   private loadTemplate(templateName: string): handlebars.TemplateDelegate {
-    const templatePath = join(
-      process.cwd(),
-      'src',
-      'templates',
-      'emails',
-      `${templateName}.hbs`,
-    );
+    // Try multiple paths to find the template
+    const possiblePaths = [
+      join(process.cwd(), 'src', 'templates', 'emails', `${templateName}.hbs`),
+      join(process.cwd(), 'dist', 'templates', 'emails', `${templateName}.hbs`),
+      join(__dirname, '..', '..', 'templates', 'emails', `${templateName}.hbs`),
+    ];
 
-    try {
-      const templateSource = readFileSync(templatePath, 'utf-8');
-      return handlebars.compile(templateSource);
-    } catch (error) {
-      this.logger.error(`Failed to load email template: ${templateName}`, error);
-      throw new Error(`Email template not found: ${templateName}`);
+    for (const templatePath of possiblePaths) {
+      try {
+        this.logger.debug(`Trying to load template from: ${templatePath}`);
+        const templateSource = readFileSync(templatePath, 'utf-8');
+        this.logger.log(`Successfully loaded email template: ${templateName} from ${templatePath}`);
+        return handlebars.compile(templateSource);
+      } catch (error) {
+        // Continue to next path
+        continue;
+      }
     }
+
+    this.logger.error(`Failed to load email template: ${templateName}. Tried paths: ${possiblePaths.join(', ')}`);
+    throw new Error(`Email template not found: ${templateName}`);
   }
 
   async testConnection(): Promise<boolean> {

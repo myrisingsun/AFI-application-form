@@ -13,7 +13,7 @@ export class CandidatesService {
 
   async findAll(): Promise<Candidate[]> {
     return this.candidateRepository.find({
-      relations: ['questionnaire'],
+      relations: ['questionnaire', 'invitations'],
       order: { createdAt: 'DESC' },
     });
   }

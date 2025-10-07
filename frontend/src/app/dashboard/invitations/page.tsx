@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Send, RotateCcw, Trash2, Eye, Clock, CheckCircle, XCircle, Copy, Check } from 'lucide-react';
+import { Plus, Send, RotateCcw, Trash2, Eye, Clock, CheckCircle, XCircle, Copy, Check, Link } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,7 @@ export default function InvitationsPage() {
   const [loading, setLoading] = useState(true);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -139,6 +140,24 @@ export default function InvitationsPage() {
       toast({
         title: 'Ошибка',
         description: 'Не удалось скопировать токен',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleCopyUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedUrl(url);
+      setTimeout(() => setCopiedUrl(null), 2000);
+      toast({
+        title: 'Скопировано',
+        description: 'Ссылка приглашения скопирована в буфер обмена',
+      });
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось скопировать ссылку',
         variant: 'destructive',
       });
     }
@@ -311,6 +330,19 @@ export default function InvitationsPage() {
                     <TableCell>{formatDate(invitation.expiresAt)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleCopyUrl(invitation.invitationUrl)}
+                          title="Скопировать ссылку приглашения"
+                        >
+                          {copiedUrl === invitation.invitationUrl ? (
+                            <Check className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <Link className="h-4 w-4" />
+                          )}
+                        </Button>
+
                         {invitation.status !== InvitationStatus.REVOKED &&
                          invitation.status !== InvitationStatus.EXPIRED && (
                           <Button

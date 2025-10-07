@@ -45,7 +45,7 @@ export class CandidatesController {
   }
 
   @ApiOperation({ summary: 'Delete candidate' })
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.RECRUITER)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.candidatesService.remove(id);

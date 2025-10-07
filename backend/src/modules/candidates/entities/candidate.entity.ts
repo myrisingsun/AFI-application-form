@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import { Questionnaire } from '../../questionnaire/entities/questionnaire.entity';
+import { Invitation } from '../../invitations/entities/invitation.entity';
 
 export enum CandidateStatus {
   DRAFT = 'draft',
@@ -71,6 +72,9 @@ export class Candidate {
 
   @OneToOne(() => Questionnaire, (questionnaire) => questionnaire.candidate)
   questionnaire: Questionnaire;
+
+  @OneToMany(() => Invitation, (invitation) => invitation.candidate)
+  invitations: Invitation[];
 
   @CreateDateColumn()
   createdAt: Date;

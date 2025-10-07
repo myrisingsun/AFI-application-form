@@ -62,7 +62,7 @@ export class Invitation {
   @Column({ nullable: true })
   userAgent: string;
 
-  @ManyToOne(() => Candidate, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Candidate, (candidate) => candidate.invitations, { onDelete: 'CASCADE' })
   @JoinColumn()
   candidate: Candidate;
 
