@@ -41,6 +41,18 @@ export const authApi = {
     api.post('/auth/login', credentials),
   register: (userData: any) => api.post('/auth/register', userData),
   profile: () => api.get('/auth/profile'),
+  updateProfile: (data: any) => api.patch('/auth/profile', data),
+  changePassword: (data: { currentPassword: string; newPassword: string }) =>
+    api.post('/auth/change-password', data),
+  updateNotificationSettings: (data: any) =>
+    api.patch('/auth/settings/notifications', data),
+  updateInvitationSettings: (data: any) =>
+    api.patch('/auth/settings/invitations', data),
+  // Admin endpoints
+  getAllUsers: () => api.get('/auth/users'),
+  createUser: (data: any) => api.post('/auth/users', data),
+  updateUser: (id: string, data: any) => api.patch(`/auth/users/${id}`, data),
+  deleteUser: (id: string) => api.delete(`/auth/users/${id}`),
 }
 
 export const candidatesApi = {

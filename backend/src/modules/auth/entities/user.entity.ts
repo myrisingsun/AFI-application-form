@@ -30,6 +30,12 @@ export class User {
   @Column()
   lastName: string;
 
+  @Column({ nullable: true })
+  middleName: string;
+
+  @Column({ nullable: true })
+  phone: string;
+
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -40,6 +46,40 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+    default: () => `'{
+      "emailOnQuestionnaireSubmitted": true,
+      "emailOnDocumentsUploaded": true,
+      "emailOnInvitationExpiring": true,
+      "expiringInvitationDays": 3,
+      "digestFrequency": "none"
+    }'`,
+  })
+  notificationSettings: {
+    emailOnQuestionnaireSubmitted: boolean;
+    emailOnDocumentsUploaded: boolean;
+    emailOnInvitationExpiring: boolean;
+    expiringInvitationDays: number;
+    digestFrequency: 'none' | 'daily' | 'weekly';
+  };
+
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+    default: () => `'{
+      "defaultExpiryDays": 14,
+      "autoSendEmail": true,
+      "emailTemplate": null
+    }'`,
+  })
+  invitationSettings: {
+    defaultExpiryDays: number;
+    autoSendEmail: boolean;
+    emailTemplate: string | null;
+  };
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -48,6 +88,7 @@ export class User {
 
   // Virtual field for full name
   get fullName(): string {
-    return `${this.firstName} ${this.lastName}`;
+    const parts = [this.lastName, this.firstName, this.middleName].filter(Boolean);
+    return parts.join(' ');
   }
 }

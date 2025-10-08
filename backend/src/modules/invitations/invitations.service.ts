@@ -5,6 +5,7 @@ import { randomBytes } from 'crypto';
 
 import { Invitation, InvitationStatus } from './entities/invitation.entity';
 import { Candidate, CandidateStatus } from '@/modules/candidates/entities/candidate.entity';
+import { User } from '@/modules/auth/entities/user.entity';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 import { InvitationResponseDto } from './dto/invitation-response.dto';
 import { EmailService } from '@/modules/email/email.service';
@@ -16,6 +17,8 @@ export class InvitationsService {
     private invitationRepository: Repository<Invitation>,
     @InjectRepository(Candidate)
     private candidateRepository: Repository<Candidate>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private emailService: EmailService,
   ) {}
 
@@ -74,6 +77,15 @@ export class InvitationsService {
     createInvitationDto: CreateInvitationDto,
     userId: string,
   ): Promise<InvitationResponseDto> {
+    // Получаем настройки пользователя
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const defaultExpiryDays = user.invitationSettings?.defaultExpiryDays || 14;
+    const autoSendEmail = user.invitationSettings?.autoSendEmail !== false;
+
     // Создаем или находим кандидата
     let candidate = await this.candidateRepository.findOne({
       where: { email: createInvitationDto.email },
@@ -93,7 +105,7 @@ export class InvitationsService {
     // Создаем новое приглашение
     const token = this.generateToken();
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 14); // 14 дней
+    expiresAt.setDate(expiresAt.getDate() + defaultExpiryDays);
 
     const invitation = this.invitationRepository.create({
       candidateId: candidate.id,
@@ -111,21 +123,23 @@ export class InvitationsService {
       relations: ['candidate', 'createdBy'],
     });
 
-    // Отправляем email приглашение
-    try {
-      await this.sendInvitationEmail(invitationWithRelations);
+    // Отправляем email приглашение, если включена автоотправка
+    if (autoSendEmail) {
+      try {
+        await this.sendInvitationEmail(invitationWithRelations, user);
 
-      // Обновляем статус на SENT
-      await this.invitationRepository.update(invitationWithRelations.id, {
-        status: InvitationStatus.SENT,
-        sentAt: new Date(),
-      });
+        // Обновляем статус на SENT
+        await this.invitationRepository.update(invitationWithRelations.id, {
+          status: InvitationStatus.SENT,
+          sentAt: new Date(),
+        });
 
-      invitationWithRelations.status = InvitationStatus.SENT;
-      invitationWithRelations.sentAt = new Date();
-    } catch (error) {
-      // Если email не отправился, оставляем статус PENDING
-      console.error('Failed to send invitation email:', error);
+        invitationWithRelations.status = InvitationStatus.SENT;
+        invitationWithRelations.sentAt = new Date();
+      } catch (error) {
+        // Если email не отправился, оставляем статус PENDING
+        console.error('Failed to send invitation email:', error);
+      }
     }
 
     return this.mapToResponseDto(invitationWithRelations);
@@ -277,7 +291,7 @@ export class InvitationsService {
     return randomBytes(32).toString('hex');
   }
 
-  private async sendInvitationEmail(invitation: Invitation): Promise<void> {
+  private async sendInvitationEmail(invitation: Invitation, user?: User): Promise<void> {
     const expiryDate = new Intl.DateTimeFormat('ru-RU', {
       year: 'numeric',
       month: 'long',
@@ -285,6 +299,9 @@ export class InvitationsService {
       hour: '2-digit',
       minute: '2-digit',
     }).format(invitation.expiresAt);
+
+    // TODO: Use custom email template from user.invitationSettings.emailTemplate if provided
+    // For now, we use the default template
 
     await this.emailService.sendInvitationEmail({
       candidateFirstName: invitation.candidate.firstName,

@@ -5,12 +5,13 @@ import { InvitationsController } from './invitations.controller';
 import { InvitationsService } from './invitations.service';
 import { Invitation } from './entities/invitation.entity';
 import { Candidate } from '../candidates/entities/candidate.entity';
+import { User } from '../auth/entities/user.entity';
 import { CandidatesModule } from '../candidates/candidates.module';
 import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Invitation, Candidate]),
+    TypeOrmModule.forFeature([Invitation, Candidate, User]),
     CandidatesModule,
     EmailModule,
   ],
