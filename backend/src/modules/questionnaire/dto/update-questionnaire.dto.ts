@@ -7,8 +7,12 @@ import {
   Matches,
   ValidateNested,
   IsObject,
+  IsEmail,
+  IsEnum,
+  MaxDate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { MaritalStatus } from '../entities/questionnaire.entity';
 
 export class EducationDto {
   @IsString()
@@ -52,6 +56,67 @@ export class WorkExperienceDto {
   responsibilities: string;
 }
 
+export class AddressDto {
+  @IsString()
+  postalCode: string; // Индекс
+
+  @IsString()
+  city: string; // Город
+
+  @IsString()
+  street: string; // Улица
+
+  @IsString()
+  house: string; // Дом
+
+  @IsOptional()
+  @IsString()
+  building?: string; // Корпус
+
+  @IsOptional()
+  @IsString()
+  apartment?: string; // Квартира
+}
+
+export class ForeignPassportDto {
+  @IsOptional()
+  @IsString()
+  series?: string;
+
+  @IsOptional()
+  @IsString()
+  number?: string;
+
+  @IsOptional()
+  @IsString()
+  issuer?: string;
+
+  @IsOptional()
+  @IsDateString()
+  issueDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  expiryDate?: string;
+}
+
+export class FamilyMemberDto {
+  @IsString()
+  relationship: string; // Степень родства
+
+  @IsString()
+  fullName: string; // ФИО
+
+  @IsString()
+  contactInfo: string; // Контактная информация
+
+  @IsString()
+  workplace: string; // Место работы
+
+  @IsString()
+  position: string; // Должность
+}
+
 export class ConsentsDto {
   @IsBoolean()
   pdnConsent: boolean;
@@ -67,6 +132,15 @@ export class ConsentsDto {
 }
 
 export class UpdateQuestionnaireDto {
+  // Step 1: Contact Information
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  additionalContact?: string; // Дополнительный контакт
+
   // Step 2: Passport Data
   @IsOptional()
   @IsString()
@@ -99,14 +173,34 @@ export class UpdateQuestionnaireDto {
   @IsString()
   birthPlace?: string;
 
-  // Step 3: Address
   @IsOptional()
   @IsString()
-  registrationAddress?: string;
+  @Matches(/^\d{12}$/, { message: 'ИНН must be 12 digits' })
+  inn?: string;
 
   @IsOptional()
   @IsString()
-  actualAddress?: string;
+  @Matches(/^\d{3}-\d{3}-\d{3} \d{2}$/, { message: 'СНИЛС must be in format XXX-XXX-XXX XX' })
+  snils?: string;
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => ForeignPassportDto)
+  foreignPassport?: ForeignPassportDto;
+
+  // Step 3: Address
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => AddressDto)
+  registrationAddress?: AddressDto;
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => AddressDto)
+  actualAddress?: AddressDto;
 
   @IsOptional()
   @IsBoolean()
@@ -125,7 +219,18 @@ export class UpdateQuestionnaireDto {
   @Type(() => WorkExperienceDto)
   workExperience?: WorkExperienceDto[];
 
-  // Step 5: Consents
+  // Step 5: Family Status (Семейное положение)
+  @IsOptional()
+  @IsEnum(MaritalStatus)
+  maritalStatus?: MaritalStatus;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => FamilyMemberDto)
+  familyMembers?: FamilyMemberDto[];
+
+  // Step 6: Consents
   @IsOptional()
   @IsObject()
   @ValidateNested()

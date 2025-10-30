@@ -9,7 +9,8 @@ import { Step1Contacts } from './steps/Step1Contacts';
 import { Step2Passport } from './steps/Step2Passport';
 import { Step3Address } from './steps/Step3Address';
 import { Step4Education } from './steps/Step4Education';
-import { Step5Consents } from './steps/Step5Consents';
+import { Step5FamilyStatus } from './steps/Step5FamilyStatus';
+import { Step6Consents } from './steps/Step6Consents';
 import { SuccessPage } from './SuccessPage';
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
   initialData: Questionnaire | null;
 }
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 export function QuestionnaireWizard({ token, initialData }: Props) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -29,6 +30,8 @@ export function QuestionnaireWizard({ token, initialData }: Props) {
   useEffect(() => {
     if (initialData) {
       setFormData({
+        email: initialData.email || initialData.candidate?.email,
+        additionalContact: initialData.additionalContact,
         passportSeries: initialData.passportSeries,
         passportNumber: initialData.passportNumber,
         passportIssuer: initialData.passportIssuer,
@@ -36,11 +39,16 @@ export function QuestionnaireWizard({ token, initialData }: Props) {
         passportIssuerCode: initialData.passportIssuerCode,
         birthDate: initialData.birthDate,
         birthPlace: initialData.birthPlace,
+        inn: initialData.inn,
+        snils: initialData.snils,
+        foreignPassport: initialData.foreignPassport,
         registrationAddress: initialData.registrationAddress,
         actualAddress: initialData.actualAddress,
         actualAddressSameAsRegistration: initialData.actualAddressSameAsRegistration || false,
         education: initialData.education || [],
         workExperience: initialData.workExperience || [],
+        maritalStatus: initialData.maritalStatus,
+        familyMembers: initialData.familyMembers || [],
         consents: initialData.consents,
       });
 
@@ -121,6 +129,8 @@ export function QuestionnaireWizard({ token, initialData }: Props) {
           {currentStep === 1 && (
             <Step1Contacts
               data={initialData?.candidate}
+              formData={formData}
+              onChange={updateFormData}
               onNext={handleNext}
             />
           )}
@@ -153,7 +163,16 @@ export function QuestionnaireWizard({ token, initialData }: Props) {
           )}
 
           {currentStep === 5 && (
-            <Step5Consents
+            <Step5FamilyStatus
+              data={formData}
+              onChange={updateFormData}
+              onNext={handleNext}
+              onBack={handleBack}
+            />
+          )}
+
+          {currentStep === 6 && (
+            <Step6Consents
               data={formData}
               onChange={updateFormData}
               onBack={handleBack}
