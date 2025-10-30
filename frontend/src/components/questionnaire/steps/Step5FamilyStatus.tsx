@@ -212,6 +212,12 @@ export function Step5FamilyStatus({ data, onChange, onNext, onBack }: Props) {
         </div>
       </div>
 
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <p className="text-sm text-blue-800">
+          Укажите ваше текущее семейное положение. Информация о членах семьи является опциональной.
+        </p>
+      </div>
+
       <div className="flex justify-between">
         <Button type="button" variant="outline" onClick={onBack}>
           <ArrowLeft className="mr-2" size={20} /> Назад

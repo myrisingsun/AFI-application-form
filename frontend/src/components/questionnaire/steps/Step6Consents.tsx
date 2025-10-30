@@ -154,6 +154,13 @@ export function Step6Consents({ data, onChange, onBack, onSubmit }: Props) {
         </div>
       </div>
 
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+        <p className="text-sm text-blue-800">
+          Для продолжения процесса трудоустройства необходимо дать согласия, отмеченные знаком *.
+          Опциональные согласия вы можете дать по желанию.
+        </p>
+      </div>
+
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
         <p className="text-sm text-yellow-800">
           <strong>Обратите внимание:</strong> После отправки анкеты изменить данные будет
