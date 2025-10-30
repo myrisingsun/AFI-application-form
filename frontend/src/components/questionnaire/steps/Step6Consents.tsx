@@ -24,7 +24,7 @@ interface Props {
   data: Partial<QuestionnaireFormData>;
   onChange: (data: Partial<QuestionnaireFormData>) => void;
   onBack: () => void;
-  onSubmit: () => void;
+  onSubmit: (data?: Partial<QuestionnaireFormData>) => void;
 }
 
 export function Step6Consents({ data, onChange, onBack, onSubmit }: Props) {
@@ -45,8 +45,8 @@ export function Step6Consents({ data, onChange, onBack, onSubmit }: Props) {
   });
 
   const handleFormSubmit = (formData: ConsentsFormData) => {
-    onChange(formData);
-    onSubmit();
+    // Передаем данные напрямую в onSubmit, чтобы избежать проблем с асинхронным обновлением состояния
+    onSubmit(formData);
   };
 
   return (

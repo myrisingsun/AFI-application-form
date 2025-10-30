@@ -93,12 +93,30 @@ export function QuestionnaireWizard({ token, initialData }: Props) {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (finalData?: Partial<QuestionnaireFormData>) => {
     try {
+      // Объединяем текущие данные с финальными (если есть)
+      const dataToSave = finalData ? { ...formData, ...finalData } : formData;
+
+      // Сначала сохраняем все данные
+      setIsSaving(true);
+      await questionnaireApi.updateByToken(token, dataToSave);
+      setIsSaving(false);
+
+      // Затем отправляем анкету
       await questionnaireApi.submitByToken(token);
       setIsSubmitted(true);
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to submit questionnaire');
+      setIsSaving(false);
+      console.error('Submit error:', error.response?.data);
+
+      // Показываем детальные ошибки валидации
+      if (error.response?.data?.errors) {
+        const errors = error.response.data.errors.join('\n');
+        alert(`Анкета не может быть отправлена:\n\n${errors}`);
+      } else {
+        alert(error.response?.data?.message || 'Не удалось отправить анкету');
+      }
     }
   };
 
