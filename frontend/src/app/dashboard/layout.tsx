@@ -22,15 +22,19 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout, isAuthenticated } = useAuthStore();
+  const { user, logout, isAuthenticated, _hasHydrated } = useAuthStore();
 
   useEffect(() => {
+    // Ждем, пока состояние загрузится из localStorage
+    if (!_hasHydrated) return;
+
     if (!isAuthenticated) {
       router.push('/login');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, _hasHydrated, router]);
 
-  if (!isAuthenticated) {
+  // Показываем ничего, пока состояние загружается
+  if (!_hasHydrated || !isAuthenticated) {
     return null;
   }
 
@@ -77,7 +81,10 @@ export default function DashboardLayout({
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => logout()}
+              onClick={() => {
+                logout();
+                router.push('/login');
+              }}
             >
               <LogOut className="w-4 h-4 mr-2" />
               Выйти

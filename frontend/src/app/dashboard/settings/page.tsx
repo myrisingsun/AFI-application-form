@@ -10,8 +10,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { authApi } from '@/lib/api';
-import { Trash2, Pencil, Plus } from 'lucide-react';
+import { authApi, settingsApi } from '@/lib/api';
+import { Trash2, Pencil, Plus, Clock } from 'lucide-react';
 
 interface User {
   id: string;
@@ -72,9 +72,19 @@ export default function SettingsPage() {
   });
   const [showCreateForm, setShowCreateForm] = useState(false);
 
+  // System settings state
+  const [sessionTimeout, setSessionTimeout] = useState<number>(168); // 7 days default
+  const [loadingSystemSettings, setLoadingSystemSettings] = useState(false);
+
   useEffect(() => {
     loadProfile();
   }, []);
+
+  useEffect(() => {
+    if (currentUserRole === 'admin') {
+      loadSystemSettings();
+    }
+  }, [currentUserRole]);
 
   const loadProfile = async () => {
     try {
@@ -128,6 +138,22 @@ export default function SettingsPage() {
         description: 'Не удалось загрузить список пользователей',
         variant: 'destructive',
       });
+    }
+  };
+
+  const loadSystemSettings = async () => {
+    try {
+      setLoadingSystemSettings(true);
+      const response = await settingsApi.getSessionTimeout();
+      setSessionTimeout(response.data.hours);
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось загрузить системные настройки',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingSystemSettings(false);
     }
   };
 
@@ -328,6 +354,34 @@ export default function SettingsPage() {
     }
   };
 
+  const handleSaveSessionTimeout = async () => {
+    if (sessionTimeout < 1 || sessionTimeout > 720) { // 1 hour to 30 days
+      toast({
+        title: 'Ошибка',
+        description: 'Время сессии должно быть от 1 до 720 часов (30 дней)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      setSaving(true);
+      await settingsApi.setSessionTimeout(sessionTimeout);
+      toast({
+        title: 'Успешно',
+        description: `Время сессии установлено: ${sessionTimeout} часов`,
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Ошибка',
+        description: error.response?.data?.message || 'Не удалось обновить время сессии',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -340,7 +394,7 @@ export default function SettingsPage() {
   }
 
   const isAdmin = currentUserRole === 'admin';
-  const tabsGridCols = isAdmin ? 'grid-cols-4' : 'grid-cols-3';
+  const tabsGridCols = isAdmin ? 'grid-cols-5' : 'grid-cols-3';
 
   return (
     <div className="container mx-auto py-6">
@@ -352,11 +406,12 @@ export default function SettingsPage() {
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className={`grid w-full max-w-2xl ${tabsGridCols}`}>
+        <TabsList className={`grid w-full max-w-3xl ${tabsGridCols}`}>
           <TabsTrigger value="profile">Профиль</TabsTrigger>
           <TabsTrigger value="notifications">Уведомления</TabsTrigger>
           <TabsTrigger value="invitations">Приглашения</TabsTrigger>
           {isAdmin && <TabsTrigger value="users">Пользователи</TabsTrigger>}
+          {isAdmin && <TabsTrigger value="system">Система</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="profile" className="space-y-4 mt-6">
@@ -860,6 +915,85 @@ export default function SettingsPage() {
                       Нет пользователей для отображения
                     </p>
                   )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
+        {isAdmin && (
+          <TabsContent value="system" className="space-y-4 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Системные настройки</CardTitle>
+                <CardDescription>
+                  Настройте параметры работы всей системы
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-4 p-4 border rounded-lg">
+                    <div className="flex-shrink-0 mt-1">
+                      <Clock className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold mb-2">Время жизни сессии</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Установите время, через которое пользователи будут автоматически выходить из системы при неактивности.
+                        Новое значение будет применяться к новым сессиям при следующем входе.
+                      </p>
+                      <div className="flex items-end gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="sessionTimeout">Время сессии (часов)</Label>
+                          <Input
+                            id="sessionTimeout"
+                            type="number"
+                            min="1"
+                            max="720"
+                            value={sessionTimeout}
+                            onChange={(e) => setSessionTimeout(parseInt(e.target.value) || 168)}
+                            className="w-32"
+                            disabled={loadingSystemSettings}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            От 1 до 720 часов (1 час - 30 дней)
+                          </p>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Примерное значение</Label>
+                          <p className="text-sm text-muted-foreground">
+                            {sessionTimeout < 24
+                              ? `${sessionTimeout} ч.`
+                              : `${Math.round(sessionTimeout / 24)} д. (${sessionTimeout} ч.)`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-4 p-3 bg-muted rounded-md">
+                        <p className="text-sm">
+                          <strong>Текущее значение:</strong> {sessionTimeout} часов (
+                          {sessionTimeout < 24 ? `${sessionTimeout} часов` : `${Math.round(sessionTimeout / 24)} дней`})
+                        </p>
+                      </div>
+                      <Button
+                        onClick={handleSaveSessionTimeout}
+                        disabled={saving || loadingSystemSettings}
+                        className="mt-4"
+                      >
+                        {saving ? 'Сохранение...' : 'Сохранить'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h4 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">
+                      Рекомендации по настройке времени сессии:
+                    </h4>
+                    <ul className="text-sm space-y-1 text-blue-800 dark:text-blue-200">
+                      <li>• 24 часа (1 день) - для высокой безопасности</li>
+                      <li>• 168 часов (7 дней) - стандартная настройка</li>
+                      <li>• 720 часов (30 дней) - для удобства пользователей</li>
+                    </ul>
+                  </div>
                 </div>
               </CardContent>
             </Card>

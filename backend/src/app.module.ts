@@ -14,6 +14,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { SecurityCheckModule } from './modules/security-check/security-check.module';
 import { ConsentsModule } from './modules/consents/consents.module';
 import { ReportsModule } from './modules/reports/reports.module';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ReportsModule } from './modules/reports/reports.module';
     SecurityCheckModule,
     ConsentsModule,
     ReportsModule,
+    SettingsModule,
   ],
   controllers: [AppController],
 })

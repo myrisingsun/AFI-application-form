@@ -11,6 +11,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateNotificationSettingsDto } from './dto/update-notification-settings.dto';
 import { UpdateInvitationSettingsDto } from './dto/update-invitation-settings.dto';
+import { SettingsService } from '../settings/settings.service';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private settingsService: SettingsService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -31,8 +33,14 @@ export class AuthService {
 
   async login(user: any) {
     const payload = { email: user.email, sub: user.id, role: user.role };
+
+    // Получаем время сессии из настроек БД
+    const sessionTimeoutHours = await this.settingsService.getSessionTimeoutHours();
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, {
+        expiresIn: `${sessionTimeoutHours}h`, // Динамическое время сессии
+      }),
       user: {
         id: user.id,
         email: user.email,
@@ -40,6 +48,7 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
       },
+      expiresIn: sessionTimeoutHours, // Возвращаем также для информации клиента
     };
   }
 

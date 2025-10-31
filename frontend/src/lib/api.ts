@@ -68,4 +68,14 @@ export const invitationsApi = {
   create: (data: any) => api.post('/invitations', data),
 }
 
+export const settingsApi = {
+  getAll: () => api.get('/settings'),
+  getByKey: (key: string) => api.get(`/settings/${key}`),
+  update: (key: string, data: { value: string; description?: string }) =>
+    api.put(`/settings/${key}`, data),
+  getSessionTimeout: () => api.get('/settings/session/timeout'),
+  setSessionTimeout: (hours: number) =>
+    api.put('/settings/session/timeout', { hours }),
+}
+
 export default api
