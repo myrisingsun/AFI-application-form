@@ -1,6 +1,7 @@
 import { format, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
+
 /**
  * Handlebars helpers for PDF template generation
  */
@@ -301,5 +302,26 @@ export const templateHelpers = {
     };
 
     return levels[degree] || degree;
+  },
+
+  /**
+   * Format address object to string
+   * Usage: {{formatAddress address}}
+   */
+  formatAddress: (address: any): string => {
+    if (!address || typeof address !== 'object') {
+      return 'Не указано';
+    }
+
+    const parts = [];
+
+    if (address.postalCode) parts.push(address.postalCode);
+    if (address.city) parts.push(address.city);
+    if (address.street) parts.push(address.street);
+    if (address.house) parts.push(`д. ${address.house}`);
+    if (address.building) parts.push(`корп. ${address.building}`);
+    if (address.apartment) parts.push(`кв. ${address.apartment}`);
+
+    return parts.length > 0 ? parts.join(', ') : 'Не указано';
   },
 };
