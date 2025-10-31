@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { questionnairesApi } from '@/lib/api/questionnaires';
-import { Questionnaire } from '@/types/questionnaire';
+import { Questionnaire, Address } from '@/types/questionnaire';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
@@ -138,6 +138,25 @@ export default function QuestionnaireDetailPage() {
     return format(new Date(dateString), 'dd.MM.yyyy', { locale: ru });
   };
 
+  const formatAddress = (address: Address | string | null | undefined) => {
+    if (!address) return '—';
+
+    // If address is already a string, return it
+    if (typeof address === 'string') return address;
+
+    // Format address object
+    const parts = [
+      address.postalCode && `${address.postalCode}`,
+      address.city,
+      address.street,
+      address.house && `д. ${address.house}`,
+      address.building && `корп. ${address.building}`,
+      address.apartment && `кв. ${address.apartment}`,
+    ].filter(Boolean);
+
+    return parts.length > 0 ? parts.join(', ') : '—';
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -252,6 +271,14 @@ export default function QuestionnaireDetailPage() {
             <p className="text-sm font-medium text-gray-500">Место рождения</p>
             <p className="text-base">{questionnaire.birthPlace || '—'}</p>
           </div>
+          <div>
+            <p className="text-sm font-medium text-gray-500">ИНН</p>
+            <p className="text-base">{questionnaire.inn || '—'}</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-500">СНИЛС</p>
+            <p className="text-base">{questionnaire.snils || '—'}</p>
+          </div>
         </CardContent>
       </Card>
 
@@ -266,14 +293,14 @@ export default function QuestionnaireDetailPage() {
         <CardContent className="space-y-4">
           <div>
             <p className="text-sm font-medium text-gray-500">Адрес регистрации</p>
-            <p className="text-base">{questionnaire.registrationAddress || '—'}</p>
+            <p className="text-base">{formatAddress(questionnaire.registrationAddress)}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Адрес проживания</p>
             <p className="text-base">
               {questionnaire.actualAddressSameAsRegistration
                 ? 'Совпадает с адресом регистрации'
-                : questionnaire.actualAddress || '—'}
+                : formatAddress(questionnaire.actualAddress)}
             </p>
           </div>
         </CardContent>
@@ -329,6 +356,44 @@ export default function QuestionnaireDetailPage() {
             </div>
           ) : (
             <p className="text-gray-500">Нет данных об опыте работы</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Семейное положение */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <User className="h-5 w-5" />
+            Семейное положение
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-4">
+            <p className="text-sm font-medium text-gray-500">Статус</p>
+            <p className="text-base">
+              {questionnaire.maritalStatus === 'married' && 'Женат/Замужем'}
+              {questionnaire.maritalStatus === 'single' && 'Холост/Не замужем'}
+              {questionnaire.maritalStatus === 'divorced' && 'Разведен(а)'}
+              {!questionnaire.maritalStatus && '—'}
+            </p>
+          </div>
+
+          {questionnaire.familyMembers && questionnaire.familyMembers.length > 0 && (
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-3">Члены семьи</p>
+              <div className="space-y-4">
+                {questionnaire.familyMembers.map((member: any, index: number) => (
+                  <div key={index} className="border-l-4 border-purple-500 pl-4 bg-gray-50 p-3 rounded">
+                    <p className="font-medium">{member.fullName}</p>
+                    <p className="text-sm text-gray-600">Степень родства: {member.relationship}</p>
+                    <p className="text-sm text-gray-600">Контакт: {member.contactInfo}</p>
+                    <p className="text-sm text-gray-600">Место работы: {member.workplace}</p>
+                    <p className="text-sm text-gray-600">Должность: {member.position}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
