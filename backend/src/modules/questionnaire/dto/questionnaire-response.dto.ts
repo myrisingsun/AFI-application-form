@@ -1,4 +1,4 @@
-import { QuestionnaireStatus, Education, WorkExperience, Consents, Address, FamilyMember, MaritalStatus } from '../entities/questionnaire.entity';
+import { QuestionnaireStatus, Education, WorkExperience, Consents, Address, FamilyMember, MaritalStatus, ForeignPassport } from '../entities/questionnaire.entity';
 
 export class QuestionnaireResponseDto {
   id: string;
@@ -15,6 +15,10 @@ export class QuestionnaireResponseDto {
     phone: string;
   };
 
+  // Step 1: Contact Information
+  email?: string;
+  additionalContact?: string;
+
   // Step 2: Passport Data
   passportSeries?: string;
   passportNumber?: string;
@@ -23,6 +27,9 @@ export class QuestionnaireResponseDto {
   passportIssuerCode?: string;
   birthDate?: Date;
   birthPlace?: string;
+  inn?: string;
+  snils?: string;
+  foreignPassport?: ForeignPassport;
 
   // Step 3: Address
   registrationAddress?: Address;

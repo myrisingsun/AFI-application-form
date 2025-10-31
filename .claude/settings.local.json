@@ -42,7 +42,8 @@
       "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"SELECT COUNT(*) as total_questionnaires FROM questionnaires;\" -t)",
       "Bash(dir:*)",
       "Bash(npm run migration:generate:*)",
-      "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"SELECT id, email, role FROM users WHERE role = ''admin'' LIMIT 5;\")"
+      "Bash(PGPASSWORD=run123 psql -h 185.244.219.128 -U afi_applicationform -d afi-application-form -c \"SELECT id, email, role FROM users WHERE role = ''admin'' LIMIT 5;\")",
+      "Bash(PGPASSWORD=run123 psql:*)"
     ],
     "deny": [],
     "ask": []

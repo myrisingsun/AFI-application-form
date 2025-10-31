@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { questionnairesApi } from '@/lib/api/questionnaires';
-import { Questionnaire, Address } from '@/types/questionnaire';
+import { Questionnaire, Address, ForeignPassport } from '@/types/questionnaire';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
@@ -235,6 +235,12 @@ export default function QuestionnaireDetailPage() {
             <p className="text-sm font-medium text-gray-500">Телефон</p>
             <p className="text-base">{questionnaire.candidate?.phone || '—'}</p>
           </div>
+          {questionnaire.additionalContact && (
+            <div className="col-span-2">
+              <p className="text-sm font-medium text-gray-500">Дополнительный контакт</p>
+              <p className="text-base">{questionnaire.additionalContact}</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -280,6 +286,32 @@ export default function QuestionnaireDetailPage() {
             <p className="text-base">{questionnaire.snils || '—'}</p>
           </div>
         </CardContent>
+
+        {questionnaire.foreignPassport && (
+          <CardContent className="mt-4 pt-4 border-t">
+            <h3 className="font-semibold mb-3">Заграничный паспорт</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Серия и номер</p>
+                <p className="text-base">
+                  {questionnaire.foreignPassport.series} {questionnaire.foreignPassport.number || '—'}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Кем выдан</p>
+                <p className="text-base">{questionnaire.foreignPassport.issuer || '—'}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Дата выдачи</p>
+                <p className="text-base">{formatDate(questionnaire.foreignPassport.issueDate)}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Срок действия</p>
+                <p className="text-base">{formatDate(questionnaire.foreignPassport.expiryDate)}</p>
+              </div>
+            </div>
+          </CardContent>
+        )}
       </Card>
 
       {/* Адреса */}
