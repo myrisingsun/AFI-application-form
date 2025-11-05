@@ -19,7 +19,7 @@ interface User {
   firstName: string;
   lastName: string;
   phone?: string;
-  role: 'admin' | 'recruiter' | 'security' | 'viewer';
+  role: 'admin' | 'recruiter';
 }
 
 export default function SettingsPage() {
@@ -68,7 +68,7 @@ export default function SettingsPage() {
     firstName: '',
     lastName: '',
     phone: '',
-    role: 'recruiter' as 'admin' | 'recruiter' | 'security' | 'viewer',
+    role: 'recruiter' as 'admin' | 'recruiter',
   });
   const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -774,8 +774,6 @@ export default function SettingsPage() {
                           <SelectContent>
                             <SelectItem value="admin">Администратор</SelectItem>
                             <SelectItem value="recruiter">Рекрутер</SelectItem>
-                            <SelectItem value="security">Безопасность</SelectItem>
-                            <SelectItem value="viewer">Наблюдатель</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -850,8 +848,6 @@ export default function SettingsPage() {
                                 <SelectContent>
                                   <SelectItem value="admin">Администратор</SelectItem>
                                   <SelectItem value="recruiter">Рекрутер</SelectItem>
-                                  <SelectItem value="security">Безопасность</SelectItem>
-                                  <SelectItem value="viewer">Наблюдатель</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -878,13 +874,7 @@ export default function SettingsPage() {
                               <p className="text-sm text-muted-foreground">{user.email}</p>
                               <p className="text-xs text-muted-foreground mt-1">
                                 Роль:{' '}
-                                {user.role === 'admin'
-                                  ? 'Администратор'
-                                  : user.role === 'recruiter'
-                                  ? 'Рекрутер'
-                                  : user.role === 'security'
-                                  ? 'Безопасность'
-                                  : 'Наблюдатель'}
+                                {user.role === 'admin' ? 'Администратор' : 'Рекрутер'}
                                 {user.phone && ` • ${user.phone}`}
                               </p>
                             </div>

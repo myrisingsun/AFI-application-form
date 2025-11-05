@@ -11,7 +11,7 @@ export const registerSchema = z.object({
   password: z.string().min(6, 'Пароль должен содержать минимум 6 символов'),
   firstName: z.string().min(2, 'Имя должно содержать минимум 2 символа'),
   lastName: z.string().min(2, 'Фамилия должна содержать минимум 2 символа'),
-  role: z.enum(['admin', 'recruiter', 'security', 'viewer']),
+  role: z.enum(['admin', 'recruiter']),
 })
 
 // Invitation schema

@@ -9,8 +9,6 @@ import {
 export enum UserRole {
   ADMIN = 'admin',
   RECRUITER = 'recruiter',
-  SECURITY = 'security',
-  VIEWER = 'viewer',
 }
 
 @Entity('users')
@@ -39,7 +37,7 @@ export class User {
   @Column({
     type: 'enum',
     enum: UserRole,
-    default: UserRole.VIEWER,
+    default: UserRole.RECRUITER,
   })
   role: UserRole;
 

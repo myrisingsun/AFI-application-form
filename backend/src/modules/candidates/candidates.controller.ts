@@ -24,14 +24,14 @@ export class CandidatesController {
   constructor(private readonly candidatesService: CandidatesService) {}
 
   @ApiOperation({ summary: 'Get all candidates' })
-  @Roles(UserRole.ADMIN, UserRole.RECRUITER, UserRole.SECURITY)
+  @Roles(UserRole.ADMIN, UserRole.RECRUITER)
   @Get()
   findAll() {
     return this.candidatesService.findAll();
   }
 
   @ApiOperation({ summary: 'Get candidate by ID' })
-  @Roles(UserRole.ADMIN, UserRole.RECRUITER, UserRole.SECURITY)
+  @Roles(UserRole.ADMIN, UserRole.RECRUITER)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.candidatesService.findOne(id);
