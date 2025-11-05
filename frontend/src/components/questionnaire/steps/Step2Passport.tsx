@@ -244,6 +244,8 @@ export function Step2Passport({ data, onChange, onNext, onBack }: Props) {
         </div>
 
         {/* Заграничный паспорт (опционально) */}
+        {/* ВРЕМЕННО СКРЫТО - Sprint 6. Раскомментировать для возврата функциональности */}
+        {/*
         <div className="border-t pt-4 mt-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">
@@ -318,6 +320,7 @@ export function Step2Passport({ data, onChange, onNext, onBack }: Props) {
             </div>
           )}
         </div>
+        */}
       </div>
 
       <div className="flex justify-between">

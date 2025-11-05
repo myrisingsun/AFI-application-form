@@ -294,6 +294,8 @@ export default function QuestionnaireDetailPage() {
           </div>
         </CardContent>
 
+        {/* ВРЕМЕННО СКРЫТО - Sprint 6. Раскомментировать для возврата функциональности */}
+        {/*
         {questionnaire.foreignPassport && (
           <CardContent className="mt-4 pt-4 border-t">
             <h3 className="font-semibold mb-3">Заграничный паспорт</h3>
@@ -319,6 +321,7 @@ export default function QuestionnaireDetailPage() {
             </div>
           </CardContent>
         )}
+        */}
       </Card>
 
       {/* Адреса */}
