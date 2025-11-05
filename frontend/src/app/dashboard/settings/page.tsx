@@ -20,6 +20,7 @@ interface User {
   lastName: string;
   phone?: string;
   role: 'admin' | 'recruiter';
+  password?: string; // Для редактирования пароля администратором
 }
 
 export default function SettingsPage() {
@@ -311,6 +312,20 @@ export default function SettingsPage() {
         email: editingUser.email,
         role: editingUser.role,
       };
+
+      // Включаем пароль только если он был введен
+      if (editingUser.password && editingUser.password.trim()) {
+        if (editingUser.password.length < 6) {
+          toast({
+            title: 'Ошибка',
+            description: 'Пароль должен быть не менее 6 символов',
+            variant: 'destructive',
+          });
+          setSaving(false);
+          return;
+        }
+        updateData.password = editingUser.password;
+      }
 
       await authApi.updateUser(editingUser.id, updateData);
       toast({
@@ -832,6 +847,19 @@ export default function SettingsPage() {
                                 value={editingUser.phone || ''}
                                 onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
                               />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label>Новый пароль (оставьте пустым, если не хотите менять)</Label>
+                              <Input
+                                type="password"
+                                value={editingUser.password || ''}
+                                onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
+                                placeholder="Минимум 6 символов"
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                Если поле пустое, пароль пользователя не изменится
+                              </p>
                             </div>
 
                             <div className="space-y-2">
