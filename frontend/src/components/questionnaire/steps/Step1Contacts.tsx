@@ -14,6 +14,10 @@ interface Props {
     phone: string;
   };
   formData?: {
+    firstName?: string;
+    lastName?: string;
+    middleName?: string;
+    phone?: string;
     email?: string;
     additionalContact?: string;
   };
@@ -23,6 +27,10 @@ interface Props {
 
 export function Step1Contacts({ data, formData, onChange, onNext }: Props) {
   const [localData, setLocalData] = useState({
+    firstName: formData?.firstName || data?.firstName || '',
+    lastName: formData?.lastName || data?.lastName || '',
+    middleName: formData?.middleName || data?.middleName || '',
+    phone: formData?.phone || data?.phone || '',
     email: formData?.email || data?.email || '',
     additionalContact: formData?.additionalContact || '',
   });
@@ -44,32 +52,75 @@ export function Step1Contacts({ data, formData, onChange, onNext }: Props) {
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Шаг 1: Контактные данные</h2>
 
       <div className="space-y-4 mb-8">
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Фамилия</label>
-          <p className="text-lg font-semibold">{data.lastName}</p>
+        <div>
+          <Label htmlFor="lastName">
+            Фамилия <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="lastName"
+            value={localData.lastName}
+            onChange={(e) => handleChange('lastName', e.target.value)}
+            placeholder="Введите фамилию"
+            className="mt-1"
+            required
+          />
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Имя</label>
-          <p className="text-lg font-semibold">{data.firstName}</p>
+        <div>
+          <Label htmlFor="firstName">
+            Имя <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="firstName"
+            value={localData.firstName}
+            onChange={(e) => handleChange('firstName', e.target.value)}
+            placeholder="Введите имя"
+            className="mt-1"
+            required
+          />
         </div>
 
-        {data.middleName && (
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Отчество</label>
-            <p className="text-lg font-semibold">{data.middleName}</p>
-          </div>
-        )}
-
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
-          <p className="text-lg font-semibold">{data.phone}</p>
+        <div>
+          <Label htmlFor="middleName">
+            Отчество <span className="text-gray-500">(опционально)</span>
+          </Label>
+          <Input
+            id="middleName"
+            value={localData.middleName}
+            onChange={(e) => handleChange('middleName', e.target.value)}
+            placeholder="Введите отчество"
+            className="mt-1"
+          />
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <p className="text-lg font-semibold">{data.email}</p>
-          <p className="text-xs text-gray-500 mt-1">Из приглашения</p>
+        <div>
+          <Label htmlFor="phone">
+            Телефон <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="phone"
+            type="tel"
+            value={localData.phone}
+            onChange={(e) => handleChange('phone', e.target.value)}
+            placeholder="+7 (___) ___-__-__"
+            className="mt-1"
+            required
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="email">
+            Email <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            value={localData.email}
+            onChange={(e) => handleChange('email', e.target.value)}
+            placeholder="email@example.com"
+            className="mt-1"
+            required
+          />
         </div>
 
         {/* Новое поле: Дополнительный контакт */}
@@ -89,13 +140,6 @@ export function Step1Contacts({ data, formData, onChange, onNext }: Props) {
             Можно указать запасной номер телефона, дополнительный email или контакт в мессенджере
           </p>
         </div>
-      </div>
-
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <p className="text-sm text-blue-800">
-          Основные контактные данные были предзаполнены из приглашения. Если вы заметили ошибку,
-          пожалуйста, свяжитесь с рекрутером.
-        </p>
       </div>
 
       <div className="flex justify-end">

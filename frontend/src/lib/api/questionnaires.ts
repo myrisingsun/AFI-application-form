@@ -30,6 +30,12 @@ export const questionnairesApi = {
     return response.data;
   },
 
+  // Обновить анкету (для админов/рекрутеров)
+  update: async (id: string, data: Partial<Questionnaire>): Promise<Questionnaire> => {
+    const response = await api.patch(`/questionnaires/${id}`, data);
+    return response.data;
+  },
+
   // Удалить анкету
   delete: async (id: string): Promise<void> => {
     await api.delete(`/questionnaires/${id}`);

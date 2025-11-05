@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FileText, Eye, Download, Search, Trash2, Copy, FileCheck } from 'lucide-react';
+import { FileText, Eye, Download, Search, Trash2, Copy, FileCheck, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -270,6 +270,15 @@ export default function QuestionnairesPage() {
                           title="Просмотреть анкету"
                         >
                           <Eye className="h-4 w-4" />
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/dashboard/questionnaires/${questionnaire.id}/edit`)}
+                          title="Редактировать анкету"
+                        >
+                          <Edit className="h-4 w-4" />
                         </Button>
 
                         {questionnaire.status === 'submitted' && (

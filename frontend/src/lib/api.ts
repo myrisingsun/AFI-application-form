@@ -68,6 +68,17 @@ export const invitationsApi = {
   create: (data: any) => api.post('/invitations', data),
 }
 
+export const questionnairesApi = {
+  getAll: () => api.get('/questionnaires'),
+  getById: (id: string) => api.get(`/questionnaires/${id}`),
+  update: (id: string, data: any) => api.patch(`/questionnaires/${id}`, data),
+  delete: (id: string) => api.delete(`/questionnaires/${id}`),
+  downloadPdf: (id: string) =>
+    api.get(`/questionnaires/${id}/pdf`, { responseType: 'blob' }),
+  downloadConsentPdf: (id: string) =>
+    api.get(`/questionnaires/${id}/consent/pdf`, { responseType: 'blob' }),
+}
+
 export const settingsApi = {
   getAll: () => api.get('/settings'),
   getByKey: (key: string) => api.get(`/settings/${key}`),

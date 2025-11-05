@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Download, User, FileText, MapPin, GraduationCap, Briefcase, CheckCircle, Trash2, FileCheck } from 'lucide-react';
+import { ArrowLeft, Download, User, FileText, MapPin, GraduationCap, Briefcase, CheckCircle, Trash2, FileCheck, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -195,6 +195,13 @@ export default function QuestionnaireDetailPage() {
           <Badge className={StatusColors[questionnaire.status as keyof typeof StatusColors] || 'bg-gray-500'}>
             {StatusLabels[questionnaire.status as keyof typeof StatusLabels] || questionnaire.status}
           </Badge>
+          <Button
+            variant="outline"
+            onClick={() => router.push(`/dashboard/questionnaires/${questionnaire.id}/edit`)}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Редактировать
+          </Button>
           {questionnaire.status === 'submitted' && (
             <>
               <Button onClick={handleDownloadPdf}>

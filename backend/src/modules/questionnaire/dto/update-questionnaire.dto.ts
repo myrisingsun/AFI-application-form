@@ -132,7 +132,23 @@ export class ConsentsDto {
 }
 
 export class UpdateQuestionnaireDto {
-  // Step 1: Contact Information
+  // Step 1: Contact Information (including candidate fields)
+  @IsOptional()
+  @IsString()
+  firstName?: string;
+
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+
+  @IsOptional()
+  @IsString()
+  middleName?: string;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
   @IsOptional()
   @IsEmail()
   email?: string;
