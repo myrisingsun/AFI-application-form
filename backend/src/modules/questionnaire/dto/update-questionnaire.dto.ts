@@ -117,6 +117,20 @@ export class FamilyMemberDto {
   position: string; // Должность
 }
 
+export class ReferenceDto {
+  @IsString()
+  fullName: string; // ФИО лица
+
+  @IsString()
+  position: string; // Должность
+
+  @IsString()
+  workplace: string; // Место работы
+
+  @IsString()
+  phone: string; // Контактная информация
+}
+
 export class ConsentsDto {
   @IsBoolean()
   pdnConsent: boolean;
@@ -234,6 +248,12 @@ export class UpdateQuestionnaireDto {
   @ValidateNested({ each: true })
   @Type(() => WorkExperienceDto)
   workExperience?: WorkExperienceDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ReferenceDto)
+  references?: ReferenceDto[];
 
   // Step 5: Family Status (Семейное положение)
   @IsOptional()

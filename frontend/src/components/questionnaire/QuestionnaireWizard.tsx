@@ -47,6 +47,7 @@ export function QuestionnaireWizard({ token, initialData }: Props) {
         actualAddressSameAsRegistration: initialData.actualAddressSameAsRegistration || false,
         education: initialData.education || [],
         workExperience: initialData.workExperience || [],
+        references: initialData.references || [],
         maritalStatus: initialData.maritalStatus,
         familyMembers: initialData.familyMembers || [],
         consents: initialData.consents,

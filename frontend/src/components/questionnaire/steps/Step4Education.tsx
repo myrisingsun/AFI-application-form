@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, ArrowRight, Plus, Trash2 } from 'lucide-react';
-import { QuestionnaireFormData, Education, WorkExperience } from '@/types/questionnaire';
+import { QuestionnaireFormData, Education, WorkExperience, Reference } from '@/types/questionnaire';
 
 const educationSchema = z.object({
   institution: z.string().min(3, 'Укажите учебное заведение'),
@@ -25,9 +25,17 @@ const workExperienceSchema = z.object({
   responsibilities: z.string().min(10, 'Опишите обязанности (минимум 10 символов)'),
 });
 
+const referenceSchema = z.object({
+  fullName: z.string().min(2, 'Укажите ФИО'),
+  position: z.string().min(2, 'Укажите должность'),
+  workplace: z.string().min(2, 'Укажите место работы'),
+  phone: z.string().min(5, 'Укажите контактную информацию'),
+});
+
 const step4Schema = z.object({
   education: z.array(educationSchema).min(1, 'Добавьте хотя бы одно образование'),
   workExperience: z.array(workExperienceSchema),
+  references: z.array(referenceSchema),
 });
 
 type Step4FormData = z.infer<typeof step4Schema>;
@@ -53,6 +61,7 @@ export function Step4Education({ data, onChange, onNext, onBack }: Props) {
         { institution: '', degree: '', fieldOfStudy: '', startDate: '', endDate: '', current: false }
       ],
       workExperience: data.workExperience || [],
+      references: data.references || [],
     },
   });
 
@@ -74,6 +83,15 @@ export function Step4Education({ data, onChange, onNext, onBack }: Props) {
     name: 'workExperience',
   });
 
+  const {
+    fields: referenceFields,
+    append: appendReference,
+    remove: removeReference,
+  } = useFieldArray({
+    control,
+    name: 'references',
+  });
+
   const onSubmit = (formData: Step4FormData) => {
     // Clean up endDate for current education/work entries
     const cleanedData = {
@@ -85,6 +103,7 @@ export function Step4Education({ data, onChange, onNext, onBack }: Props) {
         ...work,
         endDate: work.current ? undefined : work.endDate,
       })),
+      references: formData.references,
     };
     onChange(cleanedData);
     onNext();
@@ -271,6 +290,100 @@ export function Step4Education({ data, onChange, onNext, onBack }: Props) {
                   {errors.workExperience[index]?.responsibilities?.message}
                 </p>
               )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* References Section */}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">Рекомендации</h3>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              appendReference({
+                fullName: '',
+                position: '',
+                workplace: '',
+                phone: '',
+              })
+            }
+          >
+            <Plus className="mr-2" size={16} /> Добавить рекомендацию
+          </Button>
+        </div>
+
+        {referenceFields.length === 0 && (
+          <p className="text-sm text-gray-500 mb-4">Нет рекомендаций</p>
+        )}
+
+        {referenceFields.map((field, index) => (
+          <div key={field.id} className="mb-6 p-4 border border-gray-200 rounded-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="font-medium text-gray-700">Рекомендация #{index + 1}</h4>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => removeReference(index)}
+              >
+                <Trash2 size={16} className="text-red-500" />
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <Input
+                  {...register(`references.${index}.fullName`)}
+                  placeholder="ФИО рекомендателя"
+                />
+                {errors.references?.[index]?.fullName && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.references[index]?.fullName?.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Input
+                    {...register(`references.${index}.position`)}
+                    placeholder="Должность"
+                  />
+                  {errors.references?.[index]?.position && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.references[index]?.position?.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Input
+                    {...register(`references.${index}.workplace`)}
+                    placeholder="Место работы"
+                  />
+                  {errors.references?.[index]?.workplace && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.references[index]?.workplace?.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Input
+                  {...register(`references.${index}.phone`)}
+                  placeholder="Контактный телефон"
+                  type="tel"
+                />
+                {errors.references?.[index]?.phone && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.references[index]?.phone?.message}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         ))}
