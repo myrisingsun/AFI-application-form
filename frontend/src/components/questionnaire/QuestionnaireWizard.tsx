@@ -11,6 +11,7 @@ import { Step3Address } from './steps/Step3Address';
 import { Step4Education } from './steps/Step4Education';
 import { Step5FamilyStatus } from './steps/Step5FamilyStatus';
 import { Step6Consents } from './steps/Step6Consents';
+import { Step7AdditionalInfo } from './steps/Step7AdditionalInfo';
 import { SuccessPage } from './SuccessPage';
 
 interface Props {
@@ -18,7 +19,7 @@ interface Props {
   initialData: Questionnaire | null;
 }
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 
 export function QuestionnaireWizard({ token, initialData }: Props) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -51,6 +52,10 @@ export function QuestionnaireWizard({ token, initialData }: Props) {
         maritalStatus: initialData.maritalStatus,
         familyMembers: initialData.familyMembers || [],
         consents: initialData.consents,
+        entrepreneurInfo: initialData.entrepreneurInfo,
+        driverLicense: initialData.driverLicense,
+        criminalRecord: initialData.criminalRecord,
+        relativesInCompany: initialData.relativesInCompany,
       });
 
       if (initialData.status === 'submitted') {
@@ -191,6 +196,15 @@ export function QuestionnaireWizard({ token, initialData }: Props) {
           )}
 
           {currentStep === 6 && (
+            <Step7AdditionalInfo
+              data={formData}
+              onChange={updateFormData}
+              onBack={handleBack}
+              onNext={handleNext}
+            />
+          )}
+
+          {currentStep === 7 && (
             <Step6Consents
               data={formData}
               onChange={updateFormData}

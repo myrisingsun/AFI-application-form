@@ -51,7 +51,7 @@ export function Step6Consents({ data, onChange, onBack, onSubmit }: Props) {
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Шаг 6: Согласия</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Шаг 7: Согласия</h2>
 
       <div className="space-y-6 mb-8">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">

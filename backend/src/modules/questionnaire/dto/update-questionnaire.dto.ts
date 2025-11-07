@@ -145,6 +145,50 @@ export class ConsentsDto {
   medicalCheckConsent: boolean;
 }
 
+export class EntrepreneurInfoDto {
+  @IsBoolean()
+  isEntrepreneur: boolean;
+
+  @IsOptional()
+  @IsString()
+  details?: string;
+}
+
+export class DriverLicenseDto {
+  @IsBoolean()
+  hasLicense: boolean;
+
+  @IsOptional()
+  @IsString()
+  number?: string;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
+  @IsString()
+  experienceYears?: string;
+}
+
+export class CriminalRecordDto {
+  @IsBoolean()
+  hasCriminalRecord: boolean;
+
+  @IsOptional()
+  @IsString()
+  details?: string;
+}
+
+export class RelativesInCompanyDto {
+  @IsBoolean()
+  hasRelativesInCompany: boolean;
+
+  @IsOptional()
+  @IsString()
+  details?: string;
+}
+
 export class UpdateQuestionnaireDto {
   // Step 1: Contact Information (including candidate fields)
   @IsOptional()
@@ -272,4 +316,29 @@ export class UpdateQuestionnaireDto {
   @ValidateNested()
   @Type(() => ConsentsDto)
   consents?: ConsentsDto;
+
+  // Step 7: Additional Information (Sprint 7)
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => EntrepreneurInfoDto)
+  entrepreneurInfo?: EntrepreneurInfoDto;
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => DriverLicenseDto)
+  driverLicense?: DriverLicenseDto;
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CriminalRecordDto)
+  criminalRecord?: CriminalRecordDto;
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => RelativesInCompanyDto)
+  relativesInCompany?: RelativesInCompanyDto;
 }
