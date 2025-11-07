@@ -402,6 +402,32 @@ export default function QuestionnaireDetailPage() {
         </CardContent>
       </Card>
 
+      {/* Профессиональные рекомендации */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Профессиональные рекомендации
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {questionnaire.references && questionnaire.references.length > 0 ? (
+            <div className="space-y-4">
+              {questionnaire.references.map((ref: any, index: number) => (
+                <div key={index} className="border-l-4 border-orange-500 pl-4 bg-gray-50 p-3 rounded">
+                  <p className="font-medium text-base">{ref.fullName}</p>
+                  <p className="text-sm text-gray-600">Должность: {ref.position}</p>
+                  <p className="text-sm text-gray-600">Место работы: {ref.workplace}</p>
+                  <p className="text-sm text-gray-600">Телефон: {ref.phone}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500">Нет профессиональных рекомендаций</p>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Семейное положение */}
       <Card className="mb-6">
         <CardHeader>
@@ -437,6 +463,85 @@ export default function QuestionnaireDetailPage() {
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Дополнительная информация */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Дополнительная информация
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {/* Предпринимательская деятельность */}
+            <div>
+              <p className="text-sm font-medium text-gray-500">
+                Индивидуальный предприниматель / учредитель
+              </p>
+              <p className="text-base">
+                {questionnaire.entrepreneurInfo?.isEntrepreneur ? 'Да' : 'Нет'}
+              </p>
+              {questionnaire.entrepreneurInfo?.details && (
+                <p className="text-sm text-gray-600 mt-1">
+                  Уточнение: {questionnaire.entrepreneurInfo.details}
+                </p>
+              )}
+            </div>
+
+            {/* Водительское удостоверение */}
+            <div>
+              <p className="text-sm font-medium text-gray-500">Водительское удостоверение</p>
+              <p className="text-base">
+                {questionnaire.driverLicense?.hasLicense ? 'Да' : 'Нет'}
+              </p>
+              {questionnaire.driverLicense?.hasLicense && (
+                <div className="text-sm text-gray-600 mt-1 space-y-1">
+                  {questionnaire.driverLicense.number && (
+                    <p>Номер: {questionnaire.driverLicense.number}</p>
+                  )}
+                  {questionnaire.driverLicense.category && (
+                    <p>Категория: {questionnaire.driverLicense.category}</p>
+                  )}
+                  {questionnaire.driverLicense.experienceYears && (
+                    <p>Стаж: {questionnaire.driverLicense.experienceYears} лет</p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Судимости */}
+            <div>
+              <p className="text-sm font-medium text-gray-500">
+                Судимости (в т.ч. погашенные)
+              </p>
+              <p className="text-base">
+                {questionnaire.criminalRecord?.hasCriminalRecord ? 'Да' : 'Нет'}
+              </p>
+              {questionnaire.criminalRecord?.details && (
+                <p className="text-sm text-gray-600 mt-1">
+                  Подробности: {questionnaire.criminalRecord.details}
+                </p>
+              )}
+            </div>
+
+            {/* Родственники в компании */}
+            <div>
+              <p className="text-sm font-medium text-gray-500">
+                Родственники/знакомые в AFI Development
+              </p>
+              <p className="text-base">
+                {questionnaire.relativesInCompany?.hasRelativesInCompany ? 'Да' : 'Нет'}
+              </p>
+              {questionnaire.relativesInCompany?.details && (
+                <p className="text-sm text-gray-600 mt-1">
+                  ФИО: {questionnaire.relativesInCompany.details}
+                </p>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
 

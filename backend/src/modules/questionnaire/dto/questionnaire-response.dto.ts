@@ -1,4 +1,4 @@
-import { QuestionnaireStatus, Education, WorkExperience, Consents, Address, FamilyMember, MaritalStatus, ForeignPassport } from '../entities/questionnaire.entity';
+import { QuestionnaireStatus, Education, WorkExperience, Consents, Address, FamilyMember, MaritalStatus, ForeignPassport, Reference, EntrepreneurInfo, DriverLicense, CriminalRecord, RelativesInCompany } from '../entities/questionnaire.entity';
 
 export class QuestionnaireResponseDto {
   id: string;
@@ -39,6 +39,7 @@ export class QuestionnaireResponseDto {
   // Step 4: Education & Experience
   education?: Education[];
   workExperience?: WorkExperience[];
+  references?: Reference[];
 
   // Step 5: Family Status
   maritalStatus?: MaritalStatus;
@@ -46,6 +47,12 @@ export class QuestionnaireResponseDto {
 
   // Step 6: Consents
   consents?: Consents;
+
+  // Step 7: Additional Information
+  entrepreneurInfo?: EntrepreneurInfo;
+  driverLicense?: DriverLicense;
+  criminalRecord?: CriminalRecord;
+  relativesInCompany?: RelativesInCompany;
 
   createdAt: Date;
   updatedAt: Date;
